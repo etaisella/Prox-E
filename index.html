@@ -118,6 +118,7 @@
                 <strong>Prox-E</strong> studies editing through <em>primitive-based abstractions</em>, enabling localized, interpretable manipulation of shape.
                 The full abstract will be posted with the camera-ready PDF.
             </p>
+        </div>
     </section>
 
     <!-- result-section -->
@@ -337,9 +338,8 @@
         <div class="swiper-button-prev"></div>
         <div class="swiper-button-next"></div>
     </div>
-        
+        </div>
             <br></br>
-		
     </section>
 	<div class="abstract-container has-text-justified">
 			<p class="has-text-justified">
@@ -380,7 +380,7 @@
             <hr>
             <h2 align="center">Results on Edit3D-bench</h2>
             <p class="edit3d-bench-intro has-text-justified">
-                Interactive <strong>glTF / GLB</strong> viewers — drag to orbit on any mesh in a column to rotate <strong>all four meshes in that column</strong> together.
+                Interactive <strong>glTF / GLB</strong> viewers — drag on each mesh to orbit that mesh independently.
                 Each row shows two editing examples; for each example, meshes are shown in order:
                 input shape, original proxy abstraction, edited proxy abstraction, and final output.
             </p>
@@ -402,7 +402,6 @@
                                 alt="Input"
                                 camera-controls
                                 environment-image="neutral"
-                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Input</div>
                         </div>
@@ -412,7 +411,6 @@
                                 alt="Original Proxy"
                                 camera-controls
                                 environment-image="neutral"
-                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Original Proxy</div>
                         </div>
@@ -422,7 +420,6 @@
                                 alt="Edited Proxy"
                                 camera-controls
                                 environment-image="neutral"
-                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Edited Proxy</div>
                         </div>
@@ -432,7 +429,6 @@
                                 alt="Output"
                                 camera-controls
                                 environment-image="neutral"
-                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Output</div>
                         </div>
@@ -447,7 +443,6 @@
                                 alt="Input"
                                 camera-controls
                                 environment-image="neutral"
-                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Input</div>
                         </div>
@@ -457,7 +452,6 @@
                                 alt="Original Proxy"
                                 camera-controls
                                 environment-image="neutral"
-                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Original Proxy</div>
                         </div>
@@ -467,7 +461,6 @@
                                 alt="Edited Proxy"
                                 camera-controls
                                 environment-image="neutral"
-                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Edited Proxy</div>
                         </div>
@@ -477,7 +470,6 @@
                                 alt="Output"
                                 camera-controls
                                 environment-image="neutral"
-                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Output</div>
                         </div>
@@ -524,110 +516,26 @@
 
 </div>
 <script>
-const swiper = new Swiper('.swiper', {
-    autoplay: {
-    delay: 6000,
-    },
-    speed: 1000,
-    loop: true,
-  
-    pagination: {
-      el: '.swiper-pagination',
-    },
-  
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-  });
-</script>
-<script>
-(function () {
-  /**
-   * During drag, model-viewer updates the *live* camera in getCameraOrbit() /
-   * getCameraTarget(), but the cameraOrbit / cameraTarget *properties* often stay
-   * stale until the gesture ends — so syncing must read the getters, not the props.
-   * @see https://github.com/google/model-viewer/blob/master/packages/model-viewer/src/features/controls.ts
-   */
-  function syncEdit3dCameraGroups() {
-    document.querySelectorAll('.edit3d-example').forEach(function (group) {
-      var viewers = Array.prototype.slice.call(group.querySelectorAll('model-viewer'));
-      if (viewers.length < 2) return;
-
-      var syncing = false;
-
-      function readLiveCamera(source) {
-        var orbitStr = source.getCameraOrbit().toString();
-        var targetStr = source.getCameraTarget().toString();
-        var fovDeg = source.getFieldOfView();
-        return { orbitStr: orbitStr, targetStr: targetStr, fovDeg: fovDeg };
-      }
-
-      function applyLiveCamera(mv, cam) {
-        mv.cameraOrbit = cam.orbitStr;
-        mv.cameraTarget = cam.targetStr;
-        if (cam.fovDeg != null && !isNaN(cam.fovDeg)) {
-          mv.fieldOfView = cam.fovDeg + 'deg';
-        }
-        if (typeof mv.jumpCameraToGoal === 'function') {
-          mv.jumpCameraToGoal();
-        }
-      }
-
-      function syncFrom(source) {
-        if (syncing) return;
-        if (!source.getCameraOrbit || !source.getCameraTarget) return;
-        syncing = true;
-        var cam = readLiveCamera(source);
-        viewers.forEach(function (mv) {
-          if (mv === source) return;
-          applyLiveCamera(mv, cam);
-        });
-        syncing = false;
-      }
-
-      viewers.forEach(function (mv) {
-        mv.addEventListener('camera-change', function () {
-          syncFrom(mv);
-        });
-      });
-
-      Promise.all(
-        viewers.map(function (mv) {
-          return new Promise(function (resolve) {
-            if (mv.loaded) {
-              resolve();
-              return;
-            }
-            mv.addEventListener('load', resolve, { once: true });
-          });
-        })
-      ).then(function () {
-        syncing = true;
-        var cam = readLiveCamera(viewers[0]);
-        viewers.slice(1).forEach(function (mv) {
-          applyLiveCamera(mv, cam);
-        });
-        syncing = false;
-      });
+try {
+  if (document.querySelector('.swiper')) {
+    const swiper = new Swiper('.swiper', {
+      autoplay: {
+        delay: 6000,
+      },
+      speed: 1000,
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
     });
   }
-
-  function run() {
-    if (customElements.get('model-viewer')) {
-      syncEdit3dCameraGroups();
-    } else {
-      customElements.whenDefined('model-viewer').then(syncEdit3dCameraGroups);
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', run);
-  } else {
-    run();
-  }
-})();
+} catch (e) {
+  console.warn('Swiper init skipped:', e);
+}
 </script>
-
 </body></html>
 
