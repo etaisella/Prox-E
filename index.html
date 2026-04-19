@@ -545,6 +545,12 @@ const swiper = new Swiper('.swiper', {
 </script>
 <script>
 (function () {
+  /**
+   * During drag, model-viewer updates the *live* camera in getCameraOrbit() /
+   * getCameraTarget(), but the cameraOrbit / cameraTarget *properties* often stay
+   * stale until the gesture ends — so syncing must read the getters, not the props.
+   * @see https://github.com/google/model-viewer/blob/master/packages/model-viewer/src/features/controls.ts
+   */
   function syncEdit3dCameraGroups() {
     document.querySelectorAll('.edit3d-example').forEach(function (group) {
       var viewers = Array.prototype.slice.call(group.querySelectorAll('model-viewer'));
@@ -552,17 +558,32 @@ const swiper = new Swiper('.swiper', {
 
       var syncing = false;
 
+      function readLiveCamera(source) {
+        var orbitStr = source.getCameraOrbit().toString();
+        var targetStr = source.getCameraTarget().toString();
+        var fovDeg = source.getFieldOfView();
+        return { orbitStr: orbitStr, targetStr: targetStr, fovDeg: fovDeg };
+      }
+
+      function applyLiveCamera(mv, cam) {
+        mv.cameraOrbit = cam.orbitStr;
+        mv.cameraTarget = cam.targetStr;
+        if (cam.fovDeg != null && !isNaN(cam.fovDeg)) {
+          mv.fieldOfView = cam.fovDeg + 'deg';
+        }
+        if (typeof mv.jumpCameraToGoal === 'function') {
+          mv.jumpCameraToGoal();
+        }
+      }
+
       function syncFrom(source) {
         if (syncing) return;
+        if (!source.getCameraOrbit || !source.getCameraTarget) return;
         syncing = true;
-        var orbit = source.cameraOrbit;
-        var target = source.cameraTarget;
-        var fov = source.fieldOfView;
+        var cam = readLiveCamera(source);
         viewers.forEach(function (mv) {
           if (mv === source) return;
-          mv.cameraOrbit = orbit;
-          mv.cameraTarget = target;
-          if (fov != null && fov !== '') mv.fieldOfView = fov;
+          applyLiveCamera(mv, cam);
         });
         syncing = false;
       }
@@ -584,13 +605,10 @@ const swiper = new Swiper('.swiper', {
           });
         })
       ).then(function () {
-        var lead = viewers[0];
-        var fov = lead.fieldOfView;
         syncing = true;
+        var cam = readLiveCamera(viewers[0]);
         viewers.slice(1).forEach(function (mv) {
-          mv.cameraOrbit = lead.cameraOrbit;
-          mv.cameraTarget = lead.cameraTarget;
-          if (fov != null && fov !== '') mv.fieldOfView = fov;
+          applyLiveCamera(mv, cam);
         });
         syncing = false;
       });
