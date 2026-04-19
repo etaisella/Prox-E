@@ -214,8 +214,12 @@ p {
     box-shadow: 0 8px 30px rgba(0,0,0,0.08);
 }
 
-.introvid video {
+.introvid video,
+.introvid img {
     border-radius: 12px;
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 /* Swiper / Results carousel */
