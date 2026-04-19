@@ -382,7 +382,8 @@
             <hr>
             <h2 align="center">Results on Edit3D-bench</h2>
             <p class="edit3d-bench-intro has-text-justified">
-                Interactive <strong>glTF / GLB</strong> viewers (drag to orbit). Each row shows two editing examples; for each example, meshes are shown in order:
+                Interactive <strong>glTF / GLB</strong> viewers — drag to orbit on any mesh in a column to rotate <strong>all four meshes in that column</strong> together.
+                Each row shows two editing examples; for each example, meshes are shown in order:
                 input shape, original proxy abstraction, edited proxy abstraction, and final output.
             </p>
             <p class="edit3d-bench-note has-text-justified">
@@ -403,6 +404,7 @@
                                 alt="Input"
                                 camera-controls
                                 environment-image="neutral"
+                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Input</div>
                         </div>
@@ -412,6 +414,7 @@
                                 alt="Original Proxy"
                                 camera-controls
                                 environment-image="neutral"
+                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Original Proxy</div>
                         </div>
@@ -421,6 +424,7 @@
                                 alt="Edited Proxy"
                                 camera-controls
                                 environment-image="neutral"
+                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Edited Proxy</div>
                         </div>
@@ -430,6 +434,7 @@
                                 alt="Output"
                                 camera-controls
                                 environment-image="neutral"
+                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Output</div>
                         </div>
@@ -444,6 +449,7 @@
                                 alt="Input"
                                 camera-controls
                                 environment-image="neutral"
+                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Input</div>
                         </div>
@@ -453,6 +459,7 @@
                                 alt="Original Proxy"
                                 camera-controls
                                 environment-image="neutral"
+                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Original Proxy</div>
                         </div>
@@ -462,6 +469,7 @@
                                 alt="Edited Proxy"
                                 camera-controls
                                 environment-image="neutral"
+                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Edited Proxy</div>
                         </div>
@@ -471,6 +479,7 @@
                                 alt="Output"
                                 camera-controls
                                 environment-image="neutral"
+                                interpolation-decay="0"
                                 shadow-intensity="1"></model-viewer>
                             <div class="edit3d-mesh-label">Output</div>
                         </div>
@@ -533,6 +542,75 @@ const swiper = new Swiper('.swiper', {
       prevEl: '.swiper-button-prev',
     },
   });
+</script>
+<script>
+(function () {
+  function syncEdit3dCameraGroups() {
+    document.querySelectorAll('.edit3d-example').forEach(function (group) {
+      var viewers = Array.prototype.slice.call(group.querySelectorAll('model-viewer'));
+      if (viewers.length < 2) return;
+
+      var syncing = false;
+
+      function syncFrom(source) {
+        if (syncing) return;
+        syncing = true;
+        var orbit = source.cameraOrbit;
+        var target = source.cameraTarget;
+        var fov = source.fieldOfView;
+        viewers.forEach(function (mv) {
+          if (mv === source) return;
+          mv.cameraOrbit = orbit;
+          mv.cameraTarget = target;
+          if (fov != null && fov !== '') mv.fieldOfView = fov;
+        });
+        syncing = false;
+      }
+
+      viewers.forEach(function (mv) {
+        mv.addEventListener('camera-change', function () {
+          syncFrom(mv);
+        });
+      });
+
+      Promise.all(
+        viewers.map(function (mv) {
+          return new Promise(function (resolve) {
+            if (mv.loaded) {
+              resolve();
+              return;
+            }
+            mv.addEventListener('load', resolve, { once: true });
+          });
+        })
+      ).then(function () {
+        var lead = viewers[0];
+        var fov = lead.fieldOfView;
+        syncing = true;
+        viewers.slice(1).forEach(function (mv) {
+          mv.cameraOrbit = lead.cameraOrbit;
+          mv.cameraTarget = lead.cameraTarget;
+          if (fov != null && fov !== '') mv.fieldOfView = fov;
+        });
+        syncing = false;
+      });
+    });
+  }
+
+  function run() {
+    if (customElements.get('model-viewer')) {
+      syncEdit3dCameraGroups();
+    } else {
+      customElements.whenDefined('model-viewer').then(syncEdit3dCameraGroups);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+})();
 </script>
 
 </body></html>
