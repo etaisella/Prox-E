@@ -39,7 +39,7 @@ h1.ourh1 {
 }
 
 .title-e {
-    color: var(--secondary-accent);
+    color: var(--text-primary);
 }
 
 h2.ourh2 {
@@ -222,52 +222,6 @@ p {
     height: auto;
 }
 
-/* Swiper / Results carousel */
-.swiper {
-    width: 1000px;
-    max-width: 100%;
-    margin: 0 auto;
-    margin-top: -12px;
-}
-
-.swiper-wrapper {
-    height: 100%;
-    margin: 0 auto;
-}
-
-.swiper-slide img {
-    width: 100%;
-    border-radius: 8px;
-}
-
-.swiper-slide video {
-    width: 100%;
-}
-
-.swiper-button-prev, .swiper-button-next {
-    color: var(--secondary-accent);
-}
-
-.swiper-pagination-bullet-active {
-    background: var(--secondary-accent);
-}
-
-.result-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 18px;
-    color: var(--text-secondary);
-    font-weight: 500;
-    text-align: center;
-    font-style: italic;
-}
-
-.video-label-slides {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    margin-bottom: 20px;
-    color: var(--text-secondary);
-}
-
 /* Placeholder styling for results */
 .placeholder-img {
     width: 100%;
@@ -315,12 +269,6 @@ p {
     font-size: 17px;
 }
 
-.swipe-container {
-    width: 80%;
-    margin: 0 auto;
-    margin-bottom: 30px;
-}
-
 .method-container {
     width: 65%;
     margin: 0 auto;
@@ -330,7 +278,7 @@ p {
 /* Edit3D-Bench: two examples × four GLB viewers (model-viewer) */
 .edit3d-bench-container {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1020px;
     margin: 0 auto 30px auto;
     padding: 0 8px;
 }
@@ -360,19 +308,29 @@ p {
     white-space: nowrap;
 }
 
+/* Stacked rows of two quartets each (Edit3D-bench, etc.) */
+.edit3d-bench-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    width: 100%;
+    align-items: center;
+}
+
 .edit3d-row {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 20px 24px;
+    gap: 16px 18px;
     align-items: flex-start;
     justify-content: center;
+    width: 100%;
 }
 
 .edit3d-example {
-    flex: 1 1 calc(50% - 14px);
-    min-width: 280px;
-    max-width: 680px;
+    flex: 1 1 calc(50% - 12px);
+    min-width: 260px;
+    max-width: 490px;
 }
 
 .edit3d-prompt {
@@ -385,11 +343,17 @@ p {
     min-height: 2.8em;
 }
 
+/* One framed "box" per quartet; viewers sit inside without their own borders */
 .edit3d-quad {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px 6px;
+    gap: 8px;
     width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, #f8f8f8 0%, #ececec 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
 }
 
 .edit3d-cell {
@@ -401,12 +365,17 @@ p {
 
 .edit3d-viewer {
     width: 100%;
-    height: 200px;
-    background: linear-gradient(180deg, #f8f8f8 0%, #ececec 100%);
-    border-radius: 8px;
-    border: 1px solid var(--border-subtle);
+    height: 170px;
+    background: transparent;
+    border-radius: 6px;
+    border: none;
     touch-action: none;
     display: block;
+}
+
+/* Subtle warmer cast (fox original_slat); tune filters if needed */
+.edit3d-viewer.edit3d-viewer-warm-tone {
+    filter: brightness(0.95) sepia(0.11) saturate(1.20) hue-rotate(-10deg);
 }
 
 .edit3d-mesh-label {
@@ -429,13 +398,13 @@ p {
     }
 
     .edit3d-viewer {
-        height: 220px;
+        height: 190px;
     }
 }
 
 @media (max-width: 480px) {
     .edit3d-viewer {
-        height: 180px;
+        height: 160px;
     }
 }
 
@@ -462,8 +431,25 @@ p {
 }
 
 .im_container img {
+    width: 100%;
+    height: auto;
+    display: block;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+/* Method figure: same outer rounded card; image inset with breathing room */
+.method-structure-frame {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: clamp(16px, 2.8vw, 32px) clamp(18px, 3.2vw, 40px);
+    box-sizing: border-box;
+}
+
+.method-structure-frame img {
+    box-shadow: none;
+    border-radius: 6px;
 }
 
 .figure-caption {
@@ -499,15 +485,6 @@ hr {
     margin: 40px 0 20px 0;
 }
 
-/* Slide table */
-.slide-table {
-    width: 100%;
-}
-
-.slide-table td {
-    padding: 10px;
-}
-
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .page-container {
@@ -534,8 +511,9 @@ hr {
         width: 90%;
     }
     
-    .swiper {
-        width: 95%;
+    .im_container_wide {
+        width: 100%;
+        margin-left: 0;
     }
     
     .introvid {
