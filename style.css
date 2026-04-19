@@ -1,0 +1,563 @@
+/* Prox-E project page styles */
+/* A warm, sophisticated aesthetic with terracotta and deep teal accents */
+
+:root {
+    --primary-dark: #1a1a2e;
+    --primary-accent: #e07a5f;  /* Terracotta */
+    --secondary-accent: #3d5a80; /* Deep blue-teal */
+    --highlight-preserve: #81b29a; /* Sage green */
+    --highlight-blend: #f2cc8f; /* Warm gold */
+    --text-primary: #2b2d42;
+    --text-secondary: #555b6e;
+    --bg-light: #ffffff;
+    --bg-card: #ffffff;
+    --border-subtle: #e8e4df;
+}
+
+body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    width: 100%;
+    background: #ffffff;
+    color: var(--text-primary);
+    line-height: 1.7;
+}
+
+/* Title styling */
+h1.ourh1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 64px;
+    letter-spacing: -2px;
+    word-spacing: 0px;
+    line-height: 1.1;
+    margin-top: 70px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.title-prox {
+    color: var(--text-primary);
+}
+
+.title-e {
+    color: var(--secondary-accent);
+}
+
+h2.ourh2 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 30px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+}
+
+h2 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 32px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+h3.method-subheading {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--secondary-accent);
+    margin-bottom: 12px;
+    margin-top: 20px;
+}
+
+h5.conference {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: var(--secondary-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 12px;
+}
+
+p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 17px;
+    color: var(--text-secondary);
+}
+
+/* Highlight colors for TL;DR */
+.highlight-method {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.highlight-task {
+    color: var(--secondary-accent);
+    font-weight: 500;
+}
+
+.highlight-preserve {
+    color: var(--highlight-preserve);
+    font-weight: 500;
+}
+
+.highlight-blend {
+    color: var(--highlight-blend);
+    font-weight: 500;
+}
+
+/* Failure mode highlights */
+.failure-neglect {
+    color: #c0392b;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.failure-suppression {
+    color: var(--secondary-accent);
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.failure-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.failure-list li {
+    margin-bottom: 12px;
+    padding-left: 24px;
+    position: relative;
+}
+
+.failure-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--text-secondary);
+    font-weight: bold;
+}
+
+.method-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.method-list li {
+    margin-bottom: 10px;
+    font-size: 17px;
+}
+
+/* Author styling */
+.author-block {
+    font-size: 20px;
+}
+
+.author-block a {
+    color: hsl(204, 86%, 53%);
+    text-decoration: none;
+}
+
+.author-block a:hover {
+    text-decoration: underline;
+}
+
+.affiliations {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+/* Button styling */
+.publication-links {
+    width: 100%;
+    margin-top: -15px;
+}
+
+.button {
+    padding: 16px 14px;
+    background-color: white;
+    border-radius: 24px;
+    font-size: 16px;
+    color: rgb(0, 0, 0);
+    border: 2px solid rgb(135, 134, 134);
+}
+
+.button:hover {
+    border: 2px solid rgb(0, 0, 0);
+}
+
+.link-block a {
+    text-decoration: none;
+    font-size: 22px;
+    color: var(--text-primary);
+}
+
+/* Layout containers */
+.page-container {
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.introvid {
+    width: 1000px;
+    max-width: 100%;
+    margin: 0 auto;
+    margin-top: 15px;
+    margin-bottom: -10px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.introvid video {
+    border-radius: 12px;
+}
+
+/* Swiper / Results carousel */
+.swiper {
+    width: 1000px;
+    max-width: 100%;
+    margin: 0 auto;
+    margin-top: -12px;
+}
+
+.swiper-wrapper {
+    height: 100%;
+    margin: 0 auto;
+}
+
+.swiper-slide img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.swiper-slide video {
+    width: 100%;
+}
+
+.swiper-button-prev, .swiper-button-next {
+    color: var(--secondary-accent);
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--secondary-accent);
+}
+
+.result-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-align: center;
+    font-style: italic;
+}
+
+.video-label-slides {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+}
+
+/* Placeholder styling for results */
+.placeholder-img {
+    width: 100%;
+    height: 250px;
+    background: linear-gradient(135deg, var(--border-subtle) 0%, #d4d0c8 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 18px;
+    border: 2px dashed var(--border-subtle);
+}
+
+/* Content containers */
+.intro-container {
+    width: 65%;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+.intro-paragraph {
+    width: 100%;
+}
+
+.intro-paragraph p {
+    width: 100%;
+    font-size: 20px;
+    line-height: 1.8;
+}
+
+.intro-paragraph_bold {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.abstract-container {
+    width: 65%;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+.abstract-container p {
+    font-size: 17px;
+}
+
+.swipe-container {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+.method-container {
+    width: 65%;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+/* Edit3D-Bench: two examples × four GLB viewers (model-viewer) */
+.edit3d-bench-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto 30px auto;
+    padding: 0 8px;
+}
+
+.edit3d-bench-intro {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin: 12px auto 24px auto;
+    max-width: 900px;
+}
+
+.edit3d-bench-note {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 auto 20px auto;
+    max-width: 900px;
+    padding: 12px 14px;
+    background: #f6f8fa;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+}
+
+.edit3d-code {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.edit3d-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px 24px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.edit3d-example {
+    flex: 1 1 calc(50% - 14px);
+    min-width: 280px;
+    max-width: 680px;
+}
+
+.edit3d-prompt {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--text-primary);
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+    min-height: 2.8em;
+}
+
+.edit3d-quad {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px 6px;
+    width: 100%;
+}
+
+.edit3d-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+
+.edit3d-viewer {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(180deg, #f8f8f8 0%, #ececec 100%);
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    touch-action: none;
+    display: block;
+}
+
+.edit3d-mesh-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    margin-top: 6px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.2;
+}
+
+@media (max-width: 900px) {
+    .edit3d-example {
+        flex: 1 1 100%;
+        max-width: none;
+    }
+
+    .edit3d-quad {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .edit3d-viewer {
+        height: 220px;
+    }
+}
+
+@media (max-width: 480px) {
+    .edit3d-viewer {
+        height: 180px;
+    }
+}
+
+.ack-container {
+    width: 65%;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+.bib-container {
+    width: 65%;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+/* Figure styling */
+.im_container {
+    margin: 20px 0;
+}
+
+.im_container_wide {
+    width: 120%;
+    margin-left: -10%;
+}
+
+.im_container img {
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.figure-caption {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Code/BibTeX styling */
+.code-container {
+    width: 100%;
+    background-color: var(--primary-dark);
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.bib-container code {
+    color: #e8e4df;
+    font-size: 14px;
+    font-family: 'Space Mono', monospace;
+    background-color: transparent;
+    line-height: 1.6;
+}
+
+/* Horizontal rules */
+hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+    margin: 40px 0 20px 0;
+}
+
+/* Slide table */
+.slide-table {
+    width: 100%;
+}
+
+.slide-table td {
+    padding: 10px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .page-container {
+        width: 95%;
+    }
+    
+    h1.ourh1 {
+        font-size: 42px;
+    }
+    
+    h2.ourh2 {
+        font-size: 18px;
+    }
+    
+    h2 {
+        font-size: 26px;
+    }
+    
+    .intro-container,
+    .abstract-container,
+    .method-container,
+    .ack-container,
+    .bib-container {
+        width: 90%;
+    }
+    
+    .swiper {
+        width: 95%;
+    }
+    
+    .introvid {
+        width: 95%;
+    }
+    
+    .author-block {
+        font-size: 16px;
+    }
+    
+    .intro-paragraph p {
+        font-size: 17px;
+    }
+    
+    .placeholder-img {
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1.ourh1 {
+        font-size: 32px;
+    }
+    
+    .button {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+}

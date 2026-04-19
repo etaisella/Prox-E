@@ -1,0 +1,539 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link href='https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap' rel='stylesheet'>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <meta property="og:site_name" content="Prox-E" />
+    <meta property="og:type" content="video.other" />
+    <meta property="og:title" content="Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions" />
+    <meta property="og:description" content="Fine-grained 3D shape editing using primitive-based abstractions." />
+    <meta property="og:url" content="https://etaisella.github.io/Prox-E/" />
+    <meta property="og:image" content="./webpage_assets/images/icon.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions" />
+    <meta name="twitter:description" content="Fine-grained 3D shape editing using primitive-based abstractions." />
+    <meta name="twitter:url" content="https://etaisella.github.io/Prox-E/" />
+    <meta name="twitter:image" content="./webpage_assets/images/icon.png" />
+
+    <title>Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions</title>
+    <link rel="icon" href="./webpage_assets/images/icon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+</head>
+<body>
+<div class="page-container">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+    <!-- title -->
+    <h1 class="ourh1" align="center"><span class="title-prox">Prox</span><span class="title-e">-E</span></h1>
+    <h2 class="ourh2" align="center">Fine-Grained 3D Shape Editing via Primitive-Based Abstractions</h2>
+
+    <!-- authors and affiliations -->
+    <section class="authors_block">
+        <div class="authors" align="center">
+            <span class="author-block"><a href="https://etaisella.github.io/" target="_blank">Etai Sella</a><sup>1,2</sup>,</span>
+            <span class="author-block"><a href="https://hao-pt.github.io/" target="_blank">Hao Phung</a><sup>3</sup>,</span>
+            <span class="author-block"><a href="https://www.linkedin.com/in/nitay-amiel/" target="_blank">Nitay Amiel</a><sup>4</sup>,</span>
+            <span class="author-block"><a href="https://orlitany.github.io/" target="_blank">Or Litany</a><sup>4,5</sup>,</span>
+            <span class="author-block"><a href="https://orpatashnik.github.io/" target="_blank">Or Patashnik</a><sup>1,2</sup>,</span>
+            <span class="author-block"><a href="https://www.hadarelor.com/" target="_blank">Hadar Averbuch-Elor</a><sup>3</sup></span>
+        </div>
+
+		<div class="affiliations" align="center">
+            <span class="author-block"><sup>1</sup>Tel Aviv University, </span>
+            <span class="author-block"><sup>2</sup>Snap Research, </span>
+            <span class="author-block"><sup>3</sup>Cornell University, </span>
+            <span class="author-block"><sup>4</sup>Technion - Israel Institute of Technology, </span>
+            <span class="author-block"><sup>5</sup>NVIDIA</span>
+        </div>
+    </section>
+
+    <!-- link buttons -->
+    <div class="column has-text-centered">
+        <div class="publication-links" align="center">
+
+          <!-- arxiv link -->
+          <span class="link-block">
+            <a href="#" class="paper-link" style="display: inline-block">
+                <button class="button">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </button>
+            </a>
+          </span>
+
+          <!-- Github Link. -->
+          <span class="link-block">
+            <a href="#" style="display: inline-block">
+                <button class="button">
+                    <span class="icon">
+                        <i class="fa fa-github"></i>
+                    </span>
+                    <span>Code (coming soon)</span>
+                  </button>
+            </a>
+          </span>
+
+        </div>
+    </div>
+
+    <!-- teaser video -->
+    <div class="introvid">
+		<video loop autoplay muted playsinline webkit-playsinline width="100%" class="result-video">
+			<source src="webpage_assets/videos/teaser.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- intro -->
+    <section class="into-paragraph-section" width="100%">
+        <div class="intro-container has-text-justified">
+            <div class="intro-paragraph">
+                <p>
+                    <br>
+                    <span class="intro-paragraph_bold">TL;DR:</span> We introduce <span class="highlight-method">Prox-E</span>,
+                    a framework for <span class="highlight-task">fine-grained 3D shape editing</span> built on
+                    primitive-based abstractions. A fuller summary will appear with the camera-ready page.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- abstract -->
+    <section class="abstract-section" width="100%">
+        <div class="abstract-container has-text-justified">
+            <hr>
+            <h2 align="center">Abstract</h2>
+            <p class="has-text-justified">
+                Fine-grained control over 3D shape remains difficult when edits must respect structure, parts, and local detail.
+                <strong>Prox-E</strong> studies editing through <em>primitive-based abstractions</em>, enabling localized, interpretable manipulation of shape.
+                The full abstract will be posted with the camera-ready PDF.
+            </p>
+    </section>
+
+    <!-- result-section -->
+	<section class="result-section" width="100%">
+        <div class="swipe-container has-text-justified" align="center">
+            <hr>
+            <h2 align="center">Sample Results</h2><br></br>
+			<div class="swiper">
+        <div class="swiper-wrapper" align="center">
+          <!-- Slide 1: Giraffe Duck -->
+          <div class="swiper-slide">
+            <table class="slide-table" width="100%" align="center">
+                <tbody>
+                    <tr>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/input_giraffeduck.png" alt="Input">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/vanilla_giraffeduck.png" alt="Baseline">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/ours_giraffeduck.png" alt="Ours">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Input Image</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Baseline</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Prox-E (Ours)</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+          <!-- Slide 2: Boombox -->
+          <div class="swiper-slide">
+            <table class="slide-table" width="100%" align="center">
+                <tbody>
+                    <tr>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/input_boombox.png" alt="Input">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/vanilla_boombox.png" alt="Baseline">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/ours_boombox.png" alt="Ours">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Input Image</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Baseline</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Prox-E (Ours)</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+          <!-- Slide 4: Platter -->
+          <div class="swiper-slide">
+            <table class="slide-table" width="100%" align="center">
+                <tbody>
+                    <tr>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/input_platter.png" alt="Input">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/vanilla_platter.png" alt="Baseline">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/ours_platter.png" alt="Ours">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Input Image</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Baseline</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Prox-E (Ours)</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+          <!-- Slide 5: Police -->
+          <div class="swiper-slide">
+            <table class="slide-table" width="100%" align="center">
+                <tbody>
+                    <tr>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/input_police.png" alt="Input">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/vanilla_police.png" alt="Baseline">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/ours_police.png" alt="Ours">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Input Image</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Baseline</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Prox-E (Ours)</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+          <!-- Slide 5: Snail -->
+          <div class="swiper-slide">
+            <table class="slide-table" width="100%" align="center">
+                <tbody>
+                    <tr>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/input_snail.png" alt="Input">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/vanilla_snail.png" alt="Baseline">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/ours_snail.jpeg" alt="Ours">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Input Image</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Baseline</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Prox-E (Ours)</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+          <!-- Slide 6: Horse Cat -->
+          <div class="swiper-slide">
+            <table class="slide-table" width="100%" align="center">
+                <tbody>
+                    <tr>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/input_horsecat.jpeg" alt="Input">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/vanilla_horsecat.jpeg" alt="Baseline">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/ours_horsecat.jpeg" alt="Ours">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Input Image</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Baseline</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Prox-E (Ours)</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+          <!-- Slide 7: Soldier Surf -->
+          <div class="swiper-slide">
+            <table class="slide-table" width="100%" align="center">
+                <tbody>
+                    <tr>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/input_soldiersurf.png" alt="Input">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/vanilla_soldiersurf.png" alt="Baseline">
+                        </td>
+                        <td width="33%">
+                            <img align="center" src="./webpage_assets/images/result_showcase/ours_soldiersurf.png" alt="Ours">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Input Image</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Baseline</div>
+                        </td>
+                        <td width="33%">
+                            <div align="center" class="video-label-slides">Prox-E (Ours)</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- pagination -->
+        <div class="swiper-pagination"></div>
+        <!-- navigation buttons -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
+        
+            <br></br>
+		
+    </section>
+	<div class="abstract-container has-text-justified">
+			<p class="has-text-justified">
+                Placeholder carousel from the project template; figures will be replaced with Prox-E results.
+            </p>
+	</div>
+
+    <!-- method -->
+    <section class="method-section" width="100%">
+        <div class="method-container">
+            <hr>
+            <h2 align="center">How does it work?</h2>
+            <br>
+            <p class="has-text-justified">
+                A detailed method overview, figures, and comparisons will be added here for <strong>Prox-E</strong>
+                (primitive-based abstractions for fine-grained 3D shape editing). The images below are still from the template project.
+            </p>
+            <br>
+            <div class="im_container has-text-justified" width="90%" align="center">
+                <img align="center" src="./webpage_assets/images/failure_modes.png" alt="Placeholder figure" width="100%">
+                <p class="figure-caption">
+                    Placeholder figure (to be replaced).
+                </p>
+            </div>
+            <br><br>
+            <div class="im_container im_container_wide has-text-justified" align="center">
+                <img align="center" src="./webpage_assets/images/method.png" alt="Placeholder figure" width="100%">
+                <p class="figure-caption">
+                    Placeholder figure (to be replaced).
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Edit3D-Bench mesh results -->
+    <section class="edit3d-bench-section" width="100%">
+        <div class="edit3d-bench-container">
+            <hr>
+            <h2 align="center">Results on Edit3D-bench</h2>
+            <p class="edit3d-bench-intro has-text-justified">
+                Interactive <strong>glTF / GLB</strong> viewers (drag to orbit). Each row shows two editing examples; for each example, meshes are shown in order:
+                input shape, original proxy abstraction, edited proxy abstraction, and final output.
+            </p>
+            <p class="edit3d-bench-note has-text-justified">
+                <strong>Note:</strong> Browsers often block loading these models when the page is opened as a local file (<code>file://</code>).
+                Run a local server from the project folder instead, for example:
+                <code class="edit3d-code">python3 -m http.server 8000</code>
+                then open <code class="edit3d-code">http://localhost:8000/</code>.
+                When the site is served over HTTP or HTTPS (for example GitHub Pages), the viewers load normally.
+            </p>
+
+            <div class="edit3d-row">
+                <div class="edit3d-example">
+                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — example A]</p>
+                    <div class="edit3d-quad">
+                        <div class="edit3d-cell">
+                            <model-viewer class="edit3d-viewer"
+                                src="./webpage_assets/meshes/edit3dbench_results/building/original_slat.glb"
+                                alt="Input"
+                                camera-controls
+                                environment-image="neutral"
+                                shadow-intensity="1"></model-viewer>
+                            <div class="edit3d-mesh-label">Input</div>
+                        </div>
+                        <div class="edit3d-cell">
+                            <model-viewer class="edit3d-viewer"
+                                src="./webpage_assets/meshes/edit3dbench_results/building/original_abstraction.glb"
+                                alt="Original Proxy"
+                                camera-controls
+                                environment-image="neutral"
+                                shadow-intensity="1"></model-viewer>
+                            <div class="edit3d-mesh-label">Original Proxy</div>
+                        </div>
+                        <div class="edit3d-cell">
+                            <model-viewer class="edit3d-viewer"
+                                src="./webpage_assets/meshes/edit3dbench_results/building/edited_abstraction_categorized.glb"
+                                alt="Edited Proxy"
+                                camera-controls
+                                environment-image="neutral"
+                                shadow-intensity="1"></model-viewer>
+                            <div class="edit3d-mesh-label">Edited Proxy</div>
+                        </div>
+                        <div class="edit3d-cell">
+                            <model-viewer class="edit3d-viewer"
+                                src="./webpage_assets/meshes/edit3dbench_results/building/appearance_edited_mesh.glb"
+                                alt="Output"
+                                camera-controls
+                                environment-image="neutral"
+                                shadow-intensity="1"></model-viewer>
+                            <div class="edit3d-mesh-label">Output</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="edit3d-example">
+                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — example B]</p>
+                    <div class="edit3d-quad">
+                        <div class="edit3d-cell">
+                            <model-viewer class="edit3d-viewer"
+                                src="./webpage_assets/meshes/edit3dbench_results/cactus/original_slat.glb"
+                                alt="Input"
+                                camera-controls
+                                environment-image="neutral"
+                                shadow-intensity="1"></model-viewer>
+                            <div class="edit3d-mesh-label">Input</div>
+                        </div>
+                        <div class="edit3d-cell">
+                            <model-viewer class="edit3d-viewer"
+                                src="./webpage_assets/meshes/edit3dbench_results/cactus/original_abstraction.glb"
+                                alt="Original Proxy"
+                                camera-controls
+                                environment-image="neutral"
+                                shadow-intensity="1"></model-viewer>
+                            <div class="edit3d-mesh-label">Original Proxy</div>
+                        </div>
+                        <div class="edit3d-cell">
+                            <model-viewer class="edit3d-viewer"
+                                src="./webpage_assets/meshes/edit3dbench_results/cactus/edited_abstraction_categorized.glb"
+                                alt="Edited Proxy"
+                                camera-controls
+                                environment-image="neutral"
+                                shadow-intensity="1"></model-viewer>
+                            <div class="edit3d-mesh-label">Edited Proxy</div>
+                        </div>
+                        <div class="edit3d-cell">
+                            <model-viewer class="edit3d-viewer"
+                                src="./webpage_assets/meshes/edit3dbench_results/cactus/appearance_edited_mesh.glb"
+                                alt="Output"
+                                camera-controls
+                                environment-image="neutral"
+                                shadow-intensity="1"></model-viewer>
+                            <div class="edit3d-mesh-label">Output</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!--     BibTex-->
+    <section class="bib-section" width="100%">
+        <div class="bib-container">
+            <hr>
+            <h2 align="center">BibTeX</h2>
+            <div class="code-container" align="left">
+                <code>
+                  @misc{sella2026proxe,<br>
+                &emsp; title = {Prox-E: Fine-Grained {3D} Shape Editing via Primitive-Based Abstractions},<br>
+                &emsp; author = {Sella, Etai and Phung, Hao and Amiel, Nitay and Litany, Or and Patashnik, Or and Averbuch-Elor, Hadar},<br>
+                &emsp; year = {2026},<br>
+                &emsp; note = {arXiv and venue fields to be added}<br>
+                  }
+                </code>
+            </div>
+        </div>
+    </section>
+
+<!--    Acknowledgements -->
+    <section class="ack-section" width="100%"> 
+        <div class="ack-container">
+            <hr> 
+            <h2 align="center">Acknowledgements</h2> 
+            <p>
+                Acknowledgements will be updated for the camera-ready version.
+            </p> 
+        </div> 
+    </section> 
+
+  <p><br>
+  </p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+</div>
+<script>
+const swiper = new Swiper('.swiper', {
+    autoplay: {
+    delay: 6000,
+    },
+    speed: 1000,
+    loop: true,
+  
+    pagination: {
+      el: '.swiper-pagination',
+    },
+  
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  });
+</script>
+
+</body></html>
+
