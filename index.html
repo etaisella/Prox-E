@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <link href='https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap' rel='stylesheet'>
-    <link href='https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css2?family=Indie+Flower&family=Space+Mono:wght@400;700&display=swap' rel='stylesheet'>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-    <link href="style.css" rel="stylesheet" type="text/css">
+    <link href="style.css?v=7" rel="stylesheet" type="text/css">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 </head>
 <body>
@@ -39,25 +39,26 @@
     <!-- authors and affiliations -->
     <section class="authors_block">
         <div class="authors" align="center">
-            <span class="author-block"><a href="https://etaisella.github.io/" target="_blank">Etai Sella</a><sup>1,2</sup>,</span>
-            <span class="author-block"><a href="https://hao-pt.github.io/" target="_blank">Hao Phung</a><sup>3</sup>,</span>
-            <span class="author-block"><a href="https://www.linkedin.com/in/nitay-amiel/" target="_blank">Nitay Amiel</a><sup>4</sup>,</span>
-            <span class="author-block"><a href="https://orlitany.github.io/" target="_blank">Or Litany</a><sup>4,5</sup>,</span>
-            <span class="author-block"><a href="https://orpatashnik.github.io/" target="_blank">Or Patashnik</a><sup>1,2</sup>,</span>
-            <span class="author-block"><a href="https://www.hadarelor.com/" target="_blank">Hadar Averbuch-Elor</a><sup>3</sup></span>
+            <span class="author-block"><a href="https://etaisella.github.io/" target="_blank">Etai Sella</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://hao-pt.github.io/" target="_blank">Hao Phung</a><sup>2</sup>,</span>
+            <span class="author-block"><a href="https://www.linkedin.com/in/nitay-amiel/" target="_blank">Nitay Amiel</a><sup>3</sup>,</span>
+            <span class="author-block"><a href="https://orlitany.github.io/" target="_blank">Or Litany</a><sup>3,4</sup>,</span>
+            <span class="author-block"><a href="https://orpatashnik.github.io/" target="_blank">Or Patashnik</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://www.hadarelor.com/" target="_blank">Hadar Averbuch-Elor</a><sup>2</sup></span>
         </div>
 
 		<div class="affiliations" align="center">
             <span class="author-block"><sup>1</sup>Tel Aviv University, </span>
-            <span class="author-block"><sup>2</sup>Snap Research, </span>
-            <span class="author-block"><sup>3</sup>Cornell University, </span>
-            <span class="author-block"><sup>4</sup>Technion - Israel Institute of Technology, </span>
-            <span class="author-block"><sup>5</sup>NVIDIA</span>
+            <span class="author-block"><sup>2</sup>Cornell University, </span>
+            <span class="author-block"><sup>3</sup>Technion - Israel Institute of Technology, </span>
+            <span class="author-block"><sup>4</sup>NVIDIA</span>
         </div>
     </section>
 
+    <p class="venue-heading" align="center">SIGGRAPH 2026</p>
+
     <!-- link buttons -->
-    <div class="column has-text-centered">
+    <div class="header-publication-links has-text-centered">
         <div class="publication-links" align="center">
 
           <!-- arxiv link -->
@@ -87,8 +88,8 @@
         </div>
     </div>
 
-    <div class="introvid">
-        <img src="./webpage_assets/images/temp_teaser.jpg" width="1600" height="900" alt="Prox-E teaser">
+    <div class="introvid" id="site-teaser">
+        <video src="./teaser_vid/teaser_vid_premier_0.mp4" autoplay muted loop playsinline aria-label="Prox-E teaser video"></video>
     </div>
 
     <!-- intro -->
@@ -98,8 +99,7 @@
                 <p>
                     <br>
                     <span class="intro-paragraph_bold">TL;DR:</span> We introduce <span class="highlight-method">Prox-E</span>,
-                    a framework for <span class="highlight-task">fine-grained 3D shape editing</span> built on
-                    primitive-based abstractions. A fuller summary will appear with the camera-ready page.
+                    a framework performing <span class="highlight-task">fine-grained 3D shape editing</span> by abstracting 3D shapes into a primitive-based proxy shape, editing that shape using a VLM and using the edited proxy shape to drive a 3D diffusion model.
                 </p>
             </div>
         </div>
@@ -123,7 +123,7 @@
             <h2 align="center">How does it work?</h2>
             <br>
             <p class="has-text-justified">
-                <strong>Prox-E</strong> abstracts an input 3D shape into geometric primitives, edits that abstraction with a vision&ndash;language model, and uses the result to guide a 3D generative model for fine-grained, localized edits. The figure below summarizes the pipeline.
+                ETAI: I think this part should start with showing a simple figure of how we edit proxy shapes with a vlm, we should explain that specific process and then breifly go into the structure editing part, and refer to the method figure.
             </p>
             <br>
             <div class="im_container im_container_wide method-structure-frame has-text-justified" align="center">
@@ -153,7 +153,7 @@
             <div class="edit3d-bench-grid">
             <div class="edit3d-row">
                 <div class="edit3d-example edit3d-example-zoomed">
-                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — fox]</p>
+                    <p class="edit3d-prompt" align="center">make the tail longer</p>
                     <div class="edit3d-quad">
                         <div class="edit3d-cell">
                             <model-viewer class="edit3d-viewer edit3d-viewer-warm-tone"
@@ -207,7 +207,7 @@
                     </div>
                 </div>
                 <div class="edit3d-example edit3d-example-zoomed">
-                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — elephant]</p>
+                    <p class="edit3d-prompt" align="center">make it wear a red hat</p>
                     <div class="edit3d-quad">
                         <div class="edit3d-cell">
                             <model-viewer class="edit3d-viewer"
@@ -262,7 +262,7 @@
             </div>
             <div class="edit3d-row">
                 <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — cactus]</p>
+                    <p class="edit3d-prompt" align="center">make the pot cubic</p>
                     <div class="edit3d-quad">
                         <div class="edit3d-cell">
                             <model-viewer class="edit3d-viewer"
@@ -311,7 +311,7 @@
                     </div>
                 </div>
                 <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — building]</p>
+                    <p class="edit3d-prompt" align="center">make it into a windmill</p>
                     <div class="edit3d-quad">
                         <div class="edit3d-cell">
                             <model-viewer class="edit3d-viewer"
@@ -368,7 +368,7 @@
     <section class="edit3d-bench-section shapetalk-results-section" width="100%">
         <div class="edit3d-bench-container">
             <hr>
-            <h2 align="center">ShapeTalk results</h2>
+            <h2 align="center">Results on ShapeTalk</h2>
             <p class="edit3d-bench-intro has-text-justified">
                 Same setup as above: four meshes per example (Input, Original Proxy, Edited Proxy, Output), with
                 <strong>linked orbit</strong> within each column. Six ShapeTalk examples are shown in three rows
@@ -379,7 +379,7 @@
             <div class="edit3d-bench-grid">
             <div class="edit3d-row">
                 <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — wide_chair]</p>
+                    <p class="edit3d-prompt" align="center">the legs are spaced further apart</p>
                     <div class="edit3d-quad">
                         <div class="edit3d-cell">
                             <model-viewer class="edit3d-viewer"
@@ -428,7 +428,7 @@
                     </div>
                 </div>
                 <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — green_lamp]</p>
+                    <p class="edit3d-prompt" align="center">the base has more layers</p>
                     <div class="edit3d-quad">
                         <div class="edit3d-cell">
                             <model-viewer class="edit3d-viewer"
@@ -479,7 +479,7 @@
             </div>
             <div class="edit3d-row">
                 <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — wide_shade]</p>
+                    <p class="edit3d-prompt" align="center">the shade is bigger</p>
                     <div class="edit3d-quad">
                         <div class="edit3d-cell">
                             <model-viewer class="edit3d-viewer"
@@ -528,7 +528,7 @@
                     </div>
                 </div>
                 <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — pingpong]</p>
+                    <p class="edit3d-prompt" align="center">the top is more narrow</p>
                     <div class="edit3d-quad">
                         <div class="edit3d-cell">
                             <model-viewer class="edit3d-viewer"
@@ -579,7 +579,7 @@
             </div>
             <div class="edit3d-row">
                 <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — no_stretcher]</p>
+                    <p class="edit3d-prompt" align="center">there is no stretcher connecting the front legs</p>
                     <div class="edit3d-quad">
                         <div class="edit3d-cell">
                             <model-viewer class="edit3d-viewer"
@@ -628,7 +628,7 @@
                     </div>
                 </div>
                 <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">[Editing prompt placeholder — pool]</p>
+                    <p class="edit3d-prompt" align="center">the table has a sub-table underneath</p>
                     <div class="edit3d-quad">
                         <div class="edit3d-cell">
                             <model-viewer class="edit3d-viewer"
