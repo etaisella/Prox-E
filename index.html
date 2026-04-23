@@ -233,7 +233,7 @@
           </p>
           <p class="has-text-justified">
             Despite this, the majority of 3D editing methods still rely on these
-            2D editors to carry out their edits.
+            2D editors to carry out the edits.
           </p>
         </div>
       </section>
@@ -244,21 +244,12 @@
           <hr />
           <h2 align="center">How does it work?</h2>
           <br />
-          <div
-            class="im_container im_container_wide method-structure-frame has-text-justified"
-            align="center"
-          >
-            <img
-              src="./webpage_assets/images/vlm_process.png"
-              alt="VLM editing"
-            />
-          </div>
-
           <p class="has-text-justified">
-            ETAI: I think this part should start with showing a simple figure of
-            how we edit proxy shapes with a vlm, we should explain that specific
-            process and then breifly go into the structure editing part, and
-            refer to the method figure.
+            Given an input 3D shape and a text prompt, Prox-E first abstracts
+            the shape into a primitive-based proxy, edits that proxy using a VLM
+            agent to specify structure-aware modifications, and then uses the
+            edited proxy to drive a 3D Generative Backbone. Finally, appearance
+            is refined using 2D image editors to produce the final edited shape.
           </p>
           <br />
           <div
@@ -266,10 +257,52 @@
             align="center"
           >
             <img
-              src="./webpage_assets/images/structure_edit.png"
+              src="./webpage_assets/images/method_overview.svg"
               alt="Prox-E pipeline: geometric abstraction, VLM editing, and 3D generation"
             />
           </div>
+          <p class="has-text-justified">
+            These edits guide a proxy-induced denoising process by blending
+            inverted latents from the original structure (yellow), warped shape
+            (blue) and edited proxy (purple) to generate an updated structure
+            while preserving object identity.
+          </p>
+          <br />
+          <div
+            class="im_container im_container_wide method-structure-frame has-text-justified"
+            align="center"
+          >
+            <img
+              src="./webpage_assets/images/proxy_induced_generation.svg"
+              alt="Proxy-induced generation"
+            />
+          </div>
+          <br />
+
+          <h3 class="method-subheading" align="center">
+            Structure Editing with a VLM
+          </h3>
+          <div
+            class="im_container im_container_wide method-structure-frame has-text-justified"
+            align="center"
+          >
+            <img
+              src="./webpage_assets/images/vlm_process.svg"
+              alt="VLM editing"
+            />
+          </div>
+          <p class="has-text-justified">
+            We perform structure editing with a VLM agent to produce an edited
+            proxy. The VLM agent receives as input the proxy's JSON file—where
+            each primitive is described by its scale, rotation, translation, and
+            shape exponent parameters—a text editing instruction, the rendering
+            of the original shape, and multi-view renderings of the proxy. By
+            integrating these modalities, the VLM reasons over the primitive
+            parameters to produce an updated JSON file, which is used to
+            generate new multi-view renderings of the edited proxy. This process
+            repeats iteratively until the edit is confirmed or the maximum
+            number of iterations is reached.
+          </p>
         </div>
       </section>
 
