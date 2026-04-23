@@ -1,722 +1,967 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <link href='https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap' rel='stylesheet'>
-    <link href='https://fonts.googleapis.com/css2?family=Indie+Flower&family=Space+Mono:wght@400;700&display=swap' rel='stylesheet'>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
 
     <meta property="og:site_name" content="Prox-E" />
     <meta property="og:type" content="video.other" />
-    <meta property="og:title" content="Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions" />
-    <meta property="og:description" content="Fine-grained 3D shape editing using primitive-based abstractions." />
+    <meta
+      property="og:title"
+      content="Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions"
+    />
+    <meta
+      property="og:description"
+      content="Fine-grained 3D shape editing using primitive-based abstractions."
+    />
     <meta property="og:url" content="https://etaisella.github.io/Prox-E/" />
     <meta property="og:image" content="./webpage_assets/images/icon.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions" />
-    <meta name="twitter:description" content="Fine-grained 3D shape editing using primitive-based abstractions." />
+    <meta
+      name="twitter:title"
+      content="Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions"
+    />
+    <meta
+      name="twitter:description"
+      content="Fine-grained 3D shape editing using primitive-based abstractions."
+    />
     <meta name="twitter:url" content="https://etaisella.github.io/Prox-E/" />
     <meta name="twitter:image" content="./webpage_assets/images/icon.png" />
 
-    <title>Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions</title>
-    <link rel="icon" href="./webpage_assets/images/icon.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-    <link href="style.css?v=7" rel="stylesheet" type="text/css">
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
-</head>
-<body>
-<div class="page-container">
+    <title>
+      Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions
+    </title>
+    <link rel="icon" href="./webpage_assets/images/icon.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
+    />
+    <link href="style.css?v=7" rel="stylesheet" type="text/css" />
+    <script
+      type="module"
+      src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
+    ></script>
+  </head>
+  <body>
+    <div class="page-container">
+      <!-- title -->
+      <h1 class="ourh1" align="center">
+        <span class="title-prox">Prox</span><span class="title-e">-E</span>
+      </h1>
+      <h2 class="ourh2" align="center">
+        Fine-Grained 3D Shape Editing via Primitive-Based Abstractions
+      </h2>
 
-    <!-- title -->
-    <h1 class="ourh1" align="center"><span class="title-prox">Prox</span><span class="title-e">-E</span></h1>
-    <h2 class="ourh2" align="center">Fine-Grained 3D Shape Editing via Primitive-Based Abstractions</h2>
-
-    <!-- authors and affiliations -->
-    <section class="authors_block">
+      <!-- authors and affiliations -->
+      <section class="authors_block">
         <div class="authors" align="center">
-            <span class="author-block"><a href="https://etaisella.github.io/" target="_blank">Etai Sella</a><sup>1</sup>,</span>
-            <span class="author-block"><a href="https://hao-pt.github.io/" target="_blank">Hao Phung</a><sup>2</sup>,</span>
-            <span class="author-block"><a href="https://www.linkedin.com/in/nitay-amiel/" target="_blank">Nitay Amiel</a><sup>3</sup>,</span>
-            <span class="author-block"><a href="https://orlitany.github.io/" target="_blank">Or Litany</a><sup>3,4</sup>,</span>
-            <span class="author-block"><a href="https://orpatashnik.github.io/" target="_blank">Or Patashnik</a><sup>1</sup>,</span>
-            <span class="author-block"><a href="https://www.hadarelor.com/" target="_blank">Hadar Averbuch-Elor</a><sup>2</sup></span>
+          <span class="author-block"
+            ><a href="https://etaisella.github.io/" target="_blank"
+              >Etai Sella</a
+            ><sup>1</sup>,</span
+          >
+          <span class="author-block"
+            ><a href="https://hao-pt.github.io/" target="_blank">Hao Phung</a
+            ><sup>2</sup>,</span
+          >
+          <span class="author-block"
+            ><a href="https://www.linkedin.com/in/nitay-amiel/" target="_blank"
+              >Nitay Amiel</a
+            ><sup>3</sup>,</span
+          >
+          <span class="author-block"
+            ><a href="https://orlitany.github.io/" target="_blank">Or Litany</a
+            ><sup>3,4</sup>,</span
+          >
+          <span class="author-block"
+            ><a href="https://orpatashnik.github.io/" target="_blank"
+              >Or Patashnik</a
+            ><sup>1</sup>,</span
+          >
+          <span class="author-block"
+            ><a href="https://www.hadarelor.com/" target="_blank"
+              >Hadar Averbuch-Elor</a
+            ><sup>2</sup></span
+          >
         </div>
 
-		<div class="affiliations" align="center">
-            <span class="author-block"><sup>1</sup>Tel Aviv University, </span>
-            <span class="author-block"><sup>2</sup>Cornell University, </span>
-            <span class="author-block"><sup>3</sup>Technion - Israel Institute of Technology, </span>
-            <span class="author-block"><sup>4</sup>NVIDIA</span>
+        <div class="affiliations" align="center">
+          <span class="author-block"><sup>1</sup>Tel Aviv University, </span>
+          <span class="author-block"><sup>2</sup>Cornell University, </span>
+          <span class="author-block"
+            ><sup>3</sup>Technion - Israel Institute of Technology,
+          </span>
+          <span class="author-block"><sup>4</sup>NVIDIA</span>
         </div>
-    </section>
+      </section>
 
-    <p class="venue-heading" align="center">SIGGRAPH 2026</p>
+      <p class="venue-heading" align="center">SIGGRAPH 2026</p>
 
-    <!-- link buttons -->
-    <div class="header-publication-links has-text-centered">
+      <!-- link buttons -->
+      <div class="header-publication-links has-text-centered">
         <div class="publication-links" align="center">
-
           <!-- arxiv link -->
           <span class="link-block">
             <a href="#" class="paper-link" style="display: inline-block">
-                <button class="button">
-                    <span class="icon">
-                      <i class="ai ai-arxiv"></i>
-                    </span>
-                    <span>arXiv</span>
-                  </button>
+              <button class="button">
+                <span class="icon">
+                  <i class="ai ai-arxiv"></i>
+                </span>
+                <span>arXiv</span>
+              </button>
             </a>
           </span>
 
           <!-- Github Link. -->
           <span class="link-block">
             <a href="#" style="display: inline-block">
-                <button class="button">
-                    <span class="icon">
-                        <i class="fa fa-github"></i>
-                    </span>
-                    <span>Code (coming soon)</span>
-                  </button>
+              <button class="button">
+                <span class="icon">
+                  <i class="fa fa-github"></i>
+                </span>
+                <span>Code (coming soon)</span>
+              </button>
             </a>
           </span>
-
         </div>
-    </div>
+      </div>
 
-    <div class="introvid" id="site-teaser">
-        <video src="./teaser_vid/teaser_vid_premier_0.mp4" autoplay muted loop playsinline aria-label="Prox-E teaser video"></video>
-    </div>
+      <div class="introvid" id="site-teaser">
+        <video
+          src="./teaser_vid/teaser_vid_premier_0.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+          aria-label="Prox-E teaser video"
+        ></video>
+      </div>
 
-    <!-- intro -->
-    <section class="into-paragraph-section" width="100%">
+      <!-- intro -->
+      <section class="into-paragraph-section" width="100%">
         <div class="intro-container has-text-justified">
-            <div class="intro-paragraph">
-                <p>
-                    <br>
-                    <span class="intro-paragraph_bold">TL;DR:</span> We introduce <span class="highlight-method">Prox-E</span>,
-                    a framework performing <span class="highlight-task">fine-grained 3D shape editing</span> by abstracting 3D shapes into a primitive-based proxy shape, editing that shape using a VLM and using the edited proxy shape to drive a 3D diffusion model.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- abstract -->
-    <section class="abstract-section" width="100%">
-        <div class="abstract-container has-text-justified">
-            <hr>
-            <h2 align="center">Abstract</h2>
-            <p class="has-text-justified">
-                Text-based 2D image editing models have recently reached an impressive level of maturity, motivating a growing body of work that heavily depends on these models to drive 3D edits. While effective for appearance-based modifications, such 2D-centric 3D editing pipelines often struggle with fine-grained 3D editing, where localized structural changes must be applied while strictly preserving an object&rsquo;s overall identity. To address this limitation, we propose Prox-E, a training-free framework that enables fine-grained 3D control through an explicit, primitive-based geometric abstraction. Our framework first abstracts an input 3D shape into a compact set of geometric primitives. A pretrained vision&ndash;language model (VLM) then edits this abstraction to specify primitive-level changes. These structural edits are subsequently used to guide a 3D generative model, enabling fine-grained, localized modifications while preserving unchanged regions of the original shape. Through extensive experiments, we demonstrate that our method consistently balances identity preservation, shape quality, and instruction fidelity more effectively than various existing approaches, including 2D-based 3D editors and training-based methods.
-            </p>
-        </div>
-    </section>
-
-    <!-- method -->
-    <section class="method-section" width="100%">
-        <div class="method-container">
-            <hr>
-            <h2 align="center">How does it work?</h2>
-            <br>
-            <p class="has-text-justified">
-                ETAI: I think this part should start with showing a simple figure of how we edit proxy shapes with a vlm, we should explain that specific process and then breifly go into the structure editing part, and refer to the method figure.
-            </p>
-            <br>
-            <div class="im_container im_container_wide method-structure-frame has-text-justified" align="center">
-                <img src="./webpage_assets/images/structure_edit.png" alt="Prox-E pipeline: geometric abstraction, VLM editing, and 3D generation">
-            </div>
-        </div>
-    </section>
-
-    <!-- Edit3D-Bench mesh results -->
-    <section class="edit3d-bench-section" width="100%">
-        <div class="edit3d-bench-container">
-            <hr>
-            <h2 align="center">Results on Edit3D-bench</h2>
-            <p class="edit3d-bench-intro has-text-justified">
-                Interactive <strong>glTF / GLB</strong> viewers — drag on any mesh in a column to orbit <strong>all four meshes in that column</strong> together.
-                Each row shows two editing examples (fox / elephant, then cactus / building); for each example, meshes are shown in order:
-                input shape, original proxy abstraction, edited proxy abstraction, and final output.
-            </p>
-            <p class="edit3d-bench-note has-text-justified">
-                <strong>Note:</strong> Browsers often block loading these models when the page is opened as a local file (<code>file://</code>).
-                Run a local server from the project folder instead, for example:
-                <code class="edit3d-code">python3 -m http.server 8000</code>
-                then open <code class="edit3d-code">http://localhost:8000/</code>.
-                When the site is served over HTTP or HTTPS (for example GitHub Pages), the viewers load normally.
-            </p>
-
-            <div class="edit3d-bench-grid">
-            <div class="edit3d-row">
-                <div class="edit3d-example edit3d-example-zoomed">
-                    <p class="edit3d-prompt" align="center">make the tail longer</p>
-                    <div class="edit3d-quad">
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer edit3d-viewer-warm-tone"
-                                src="./webpage_assets/meshes/edit3dbench_results/fox/original_slat.glb"
-                                alt="Input"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                exposure="0.88"
-                                interpolation-decay="0"
-                                shadow-intensity="1"
-                                camera-orbit="0deg 75deg 93%"></model-viewer>
-                            <div class="edit3d-mesh-label">Input</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/fox/original_abstraction.glb"
-                                alt="Original Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"
-                                camera-orbit="0deg 75deg 93%"></model-viewer>
-                            <div class="edit3d-mesh-label">Original Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/fox/edited_abstraction_categorized.glb"
-                                alt="Edited Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"
-                                camera-orbit="0deg 75deg 93%"></model-viewer>
-                            <div class="edit3d-mesh-label">Edited Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/fox/appearance_edited_mesh.glb"
-                                alt="Output"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"
-                                camera-orbit="0deg 75deg 93%"></model-viewer>
-                            <div class="edit3d-mesh-label">Output</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="edit3d-example edit3d-example-zoomed">
-                    <p class="edit3d-prompt" align="center">make it wear a red hat</p>
-                    <div class="edit3d-quad">
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/elephant/original_slat.glb"
-                                alt="Input"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"
-                                camera-orbit="0deg 75deg 93%"></model-viewer>
-                            <div class="edit3d-mesh-label">Input</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/elephant/original_abstraction.glb"
-                                alt="Original Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"
-                                camera-orbit="0deg 75deg 93%"></model-viewer>
-                            <div class="edit3d-mesh-label">Original Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/elephant/edited_abstraction_categorized.glb"
-                                alt="Edited Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"
-                                camera-orbit="0deg 75deg 93%"></model-viewer>
-                            <div class="edit3d-mesh-label">Edited Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/elephant/appearance_edited_mesh.glb"
-                                alt="Output"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"
-                                camera-orbit="0deg 75deg 93%"></model-viewer>
-                            <div class="edit3d-mesh-label">Output</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="edit3d-row">
-                <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">make the pot cubic</p>
-                    <div class="edit3d-quad">
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/cactus/original_slat.glb"
-                                alt="Input"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Input</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/cactus/original_abstraction.glb"
-                                alt="Original Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Original Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/cactus/edited_abstraction_categorized.glb"
-                                alt="Edited Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Edited Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/cactus/appearance_edited_mesh.glb"
-                                alt="Output"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Output</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">make it into a windmill</p>
-                    <div class="edit3d-quad">
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/building/original_slat.glb"
-                                alt="Input"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Input</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/building/original_abstraction.glb"
-                                alt="Original Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Original Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/building/edited_abstraction_categorized.glb"
-                                alt="Edited Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Edited Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/edit3dbench_results/building/appearance_edited_mesh.glb"
-                                alt="Output"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Output</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ShapeTalk mesh results (same layout & camera sync as Edit3D-bench) -->
-    <section class="edit3d-bench-section shapetalk-results-section" width="100%">
-        <div class="edit3d-bench-container">
-            <hr>
-            <h2 align="center">Results on ShapeTalk</h2>
-            <p class="edit3d-bench-intro has-text-justified">
-                Same setup as above: four meshes per example (Input, Original Proxy, Edited Proxy, Output), with
-                <strong>linked orbit</strong> within each column. Six ShapeTalk examples are shown in three rows
-                (two per row). Results are loaded from
-                <code class="edit3d-code">webpage_assets/meshes/shapetalk_results/</code>.
-            </p>
-
-            <div class="edit3d-bench-grid">
-            <div class="edit3d-row">
-                <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">the legs are spaced further apart</p>
-                    <div class="edit3d-quad">
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/wide_chair/original_slat.glb"
-                                alt="Input"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Input</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/wide_chair/original_abstraction.glb"
-                                alt="Original Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Original Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/wide_chair/edited_abstraction_categorized.glb"
-                                alt="Edited Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Edited Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/wide_chair/appearance_edited_mesh.glb"
-                                alt="Output"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Output</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">the base has more layers</p>
-                    <div class="edit3d-quad">
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/greenlamp/original_slat.glb"
-                                alt="Input"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Input</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/greenlamp/original_abstraction.glb"
-                                alt="Original Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Original Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/greenlamp/edited_abstraction_categorized.glb"
-                                alt="Edited Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Edited Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/greenlamp/appearance_edited_mesh.glb"
-                                alt="Output"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Output</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="edit3d-row">
-                <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">the shade is bigger</p>
-                    <div class="edit3d-quad">
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/wideshade/original_slat.glb"
-                                alt="Input"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Input</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/wideshade/original_abstraction.glb"
-                                alt="Original Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Original Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/wideshade/edited_abstraction_categorized.glb"
-                                alt="Edited Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Edited Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/wideshade/appearance_edited_mesh.glb"
-                                alt="Output"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Output</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">the top is more narrow</p>
-                    <div class="edit3d-quad">
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/pingpong/original_slat.glb"
-                                alt="Input"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Input</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/pingpong/original_abstraction.glb"
-                                alt="Original Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Original Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/pingpong/edited_abstraction_categorized.glb"
-                                alt="Edited Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Edited Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/pingpong/appearance_edited_mesh.glb"
-                                alt="Output"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Output</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="edit3d-row">
-                <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">there is no stretcher connecting the front legs</p>
-                    <div class="edit3d-quad">
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/no_stretcher/original_slat.glb"
-                                alt="Input"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Input</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/no_stretcher/original_abstraction.glb"
-                                alt="Original Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Original Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/no_stretcher/edited_abstraction_categorized.glb"
-                                alt="Edited Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Edited Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/no_stretcher/appearance_edited_mesh.glb"
-                                alt="Output"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Output</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="edit3d-example">
-                    <p class="edit3d-prompt" align="center">the table has a sub-table underneath</p>
-                    <div class="edit3d-quad">
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/pool/original_slat.glb"
-                                alt="Input"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Input</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/pool/original_abstraction.glb"
-                                alt="Original Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Original Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/pool/edited_abstraction_categorized.glb"
-                                alt="Edited Proxy"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Edited Proxy</div>
-                        </div>
-                        <div class="edit3d-cell">
-                            <model-viewer class="edit3d-viewer"
-                                src="./webpage_assets/meshes/shapetalk_results/pool/appearance_edited_mesh.glb"
-                                alt="Output"
-                                camera-controls
-                                field-of-view="30deg"
-                                environment-image="neutral"
-                                interpolation-decay="0"
-                                shadow-intensity="1"></model-viewer>
-                            <div class="edit3d-mesh-label">Output</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div>
-        </div>
-    </section>
-
-<!--     BibTex-->
-    <section class="bib-section" width="100%">
-        <div class="bib-container">
-            <hr>
-            <h2 align="center">BibTeX</h2>
-            <div class="code-container" align="left">
-                <code>
-                  @misc{sella2026proxe,<br>
-                &emsp; title = {Prox-E: Fine-Grained {3D} Shape Editing via Primitive-Based Abstractions},<br>
-                &emsp; author = {Sella, Etai and Phung, Hao and Amiel, Nitay and Litany, Or and Patashnik, Or and Averbuch-Elor, Hadar},<br>
-                &emsp; year = {2026},<br>
-                &emsp; note = {arXiv and venue fields to be added}<br>
-                  }
-                </code>
-            </div>
-        </div>
-    </section>
-
-<!--    Acknowledgements -->
-    <section class="ack-section" width="100%"> 
-        <div class="ack-container">
-            <hr> 
-            <h2 align="center">Acknowledgements</h2> 
+          <div class="intro-paragraph">
             <p>
-                Acknowledgements will be updated for the camera-ready version.
-            </p> 
-        </div> 
-    </section> 
+              <br />
+              <span class="intro-paragraph_bold">TL;DR:</span> We introduce
+              <span class="highlight-method">Prox-E</span>, a framework
+              performing
+              <span class="highlight-task">fine-grained 3D shape editing</span>
+              by abstracting 3D shapes into a primitive-based proxy shape,
+              editing that shape using a VLM and using the edited proxy shape to
+              drive a 3D diffusion model.
+            </p>
+          </div>
+        </div>
+      </section>
 
-  <p><br>
-  </p>
-  <p>&nbsp;</p>
-  <p>&nbsp;</p>
-  <p>&nbsp;</p>
+      <!-- abstract -->
+      <section class="abstract-section" width="100%">
+        <div class="abstract-container has-text-justified">
+          <hr />
+          <h2 align="center">Abstract</h2>
+          <p class="has-text-justified">
+            Text-based 2D image editing models have recently reached an
+            impressive level of maturity, motivating a growing body of work that
+            heavily depends on these models to drive 3D edits. While effective
+            for appearance-based modifications, such 2D-centric 3D editing
+            pipelines often struggle with fine-grained 3D editing, where
+            localized structural changes must be applied while strictly
+            preserving an object&rsquo;s overall identity. To address this
+            limitation, we propose Prox-E, a training-free framework that
+            enables fine-grained 3D control through an explicit, primitive-based
+            geometric abstraction. Our framework first abstracts an input 3D
+            shape into a compact set of geometric primitives. A pretrained
+            vision&ndash;language model (VLM) then edits this abstraction to
+            specify primitive-level changes. These structural edits are
+            subsequently used to guide a 3D generative model, enabling
+            fine-grained, localized modifications while preserving unchanged
+            regions of the original shape. Through extensive experiments, we
+            demonstrate that our method consistently balances identity
+            preservation, shape quality, and instruction fidelity more
+            effectively than various existing approaches, including 2D-based 3D
+            editors and training-based methods.
+          </p>
+        </div>
+      </section>
 
-</div>
-<script defer src="./webpage_assets/js/edit3d-sync-cameras.js"></script>
-</body></html>
+      <!-- motivation -->
+      <section class="motivation-section" width="100%">
+        <div class="method-container">
+          <hr />
+          <h2 align="center">Motivation</h2>
+          <br />
+          <div
+            class="im_container im_container_wide method-structure-frame has-text-justified"
+            align="center"
+          >
+            <img
+              src="./webpage_assets/images/2d_editor_motivation.png"
+              alt="2D Editor failures, motivation"
+              style="max-width: 100%; width: 60%; display: block; margin: auto"
+            />
+          </div>
 
+          <p class="has-text-justified">
+            2D editors excel at modifying object appearance and adding new
+            objects, such as making the chair fencier and inserting the bunny.
+            However, they fall short on geometric editing, which requires an
+            understanding of 3D parameters to produce accurate results.
+          </p>
+          <p class="has-text-justified">
+            Despite this, the majority of 3D editing methods still rely on these
+            2D editors to carry out their edits.
+          </p>
+        </div>
+      </section>
+
+      <!-- method -->
+      <section class="method-section" width="100%">
+        <div class="method-container">
+          <hr />
+          <h2 align="center">How does it work?</h2>
+          <br />
+          <div
+            class="im_container im_container_wide method-structure-frame has-text-justified"
+            align="center"
+          >
+            <img
+              src="./webpage_assets/images/vlm_process.png"
+              alt="VLM editing"
+            />
+          </div>
+
+          <p class="has-text-justified">
+            ETAI: I think this part should start with showing a simple figure of
+            how we edit proxy shapes with a vlm, we should explain that specific
+            process and then breifly go into the structure editing part, and
+            refer to the method figure.
+          </p>
+          <br />
+          <div
+            class="im_container im_container_wide method-structure-frame has-text-justified"
+            align="center"
+          >
+            <img
+              src="./webpage_assets/images/structure_edit.png"
+              alt="Prox-E pipeline: geometric abstraction, VLM editing, and 3D generation"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Edit3D-Bench mesh results -->
+      <section class="edit3d-bench-section" width="100%">
+        <div class="edit3d-bench-container">
+          <hr />
+          <h2 align="center">Results on Edit3D-bench</h2>
+          <p class="edit3d-bench-intro has-text-justified">
+            Interactive <strong>glTF / GLB</strong> viewers — drag on any mesh
+            in a column to orbit
+            <strong>all four meshes in that column</strong> together. Each row
+            shows two editing examples (fox / elephant, then cactus / building);
+            for each example, meshes are shown in order: input shape, original
+            proxy abstraction, edited proxy abstraction, and final output.
+          </p>
+          <p class="edit3d-bench-note has-text-justified">
+            <strong>Note:</strong> Browsers often block loading these models
+            when the page is opened as a local file (<code>file://</code>). Run
+            a local server from the project folder instead, for example:
+            <code class="edit3d-code">python3 -m http.server 8000</code>
+            then open <code class="edit3d-code">http://localhost:8000/</code>.
+            When the site is served over HTTP or HTTPS (for example GitHub
+            Pages), the viewers load normally.
+          </p>
+
+          <div class="edit3d-bench-grid">
+            <div class="edit3d-row">
+              <div class="edit3d-example edit3d-example-zoomed">
+                <p class="edit3d-prompt" align="center">make the tail longer</p>
+                <div class="edit3d-quad">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer edit3d-viewer-warm-tone"
+                      src="./webpage_assets/meshes/edit3dbench_results/fox/original_slat.glb"
+                      alt="Input"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      exposure="0.88"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 93%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Input</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/fox/original_abstraction.glb"
+                      alt="Original Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 93%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/fox/edited_abstraction_categorized.glb"
+                      alt="Edited Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 93%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Edited Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/fox/appearance_edited_mesh.glb"
+                      alt="Output"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 93%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Output</div>
+                  </div>
+                </div>
+              </div>
+              <div class="edit3d-example edit3d-example-zoomed">
+                <p class="edit3d-prompt" align="center">
+                  make it wear a red hat
+                </p>
+                <div class="edit3d-quad">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/elephant/original_slat.glb"
+                      alt="Input"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 93%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Input</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/elephant/original_abstraction.glb"
+                      alt="Original Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 93%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/elephant/edited_abstraction_categorized.glb"
+                      alt="Edited Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 93%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Edited Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/elephant/appearance_edited_mesh.glb"
+                      alt="Output"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 93%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Output</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="edit3d-row">
+              <div class="edit3d-example">
+                <p class="edit3d-prompt" align="center">make the pot cubic</p>
+                <div class="edit3d-quad">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/cactus/original_slat.glb"
+                      alt="Input"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Input</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/cactus/original_abstraction.glb"
+                      alt="Original Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/cactus/edited_abstraction_categorized.glb"
+                      alt="Edited Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Edited Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/cactus/appearance_edited_mesh.glb"
+                      alt="Output"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Output</div>
+                  </div>
+                </div>
+              </div>
+              <div class="edit3d-example">
+                <p class="edit3d-prompt" align="center">
+                  make it into a windmill
+                </p>
+                <div class="edit3d-quad">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/building/original_slat.glb"
+                      alt="Input"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Input</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/building/original_abstraction.glb"
+                      alt="Original Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/building/edited_abstraction_categorized.glb"
+                      alt="Edited Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Edited Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/edit3dbench_results/building/appearance_edited_mesh.glb"
+                      alt="Output"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Output</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ShapeTalk mesh results (same layout & camera sync as Edit3D-bench) -->
+      <section
+        class="edit3d-bench-section shapetalk-results-section"
+        width="100%"
+      >
+        <div class="edit3d-bench-container">
+          <hr />
+          <h2 align="center">Results on ShapeTalk</h2>
+          <p class="edit3d-bench-intro has-text-justified">
+            Same setup as above: four meshes per example (Input, Original Proxy,
+            Edited Proxy, Output), with
+            <strong>linked orbit</strong> within each column. Six ShapeTalk
+            examples are shown in three rows (two per row). Results are loaded
+            from
+            <code class="edit3d-code"
+              >webpage_assets/meshes/shapetalk_results/</code
+            >.
+          </p>
+
+          <div class="edit3d-bench-grid">
+            <div class="edit3d-row">
+              <div class="edit3d-example">
+                <p class="edit3d-prompt" align="center">
+                  the legs are spaced further apart
+                </p>
+                <div class="edit3d-quad">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/wide_chair/original_slat.glb"
+                      alt="Input"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Input</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/wide_chair/original_abstraction.glb"
+                      alt="Original Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/wide_chair/edited_abstraction_categorized.glb"
+                      alt="Edited Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Edited Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/wide_chair/appearance_edited_mesh.glb"
+                      alt="Output"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Output</div>
+                  </div>
+                </div>
+              </div>
+              <div class="edit3d-example">
+                <p class="edit3d-prompt" align="center">
+                  the base has more layers
+                </p>
+                <div class="edit3d-quad">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/greenlamp/original_slat.glb"
+                      alt="Input"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Input</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/greenlamp/original_abstraction.glb"
+                      alt="Original Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/greenlamp/edited_abstraction_categorized.glb"
+                      alt="Edited Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Edited Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/greenlamp/appearance_edited_mesh.glb"
+                      alt="Output"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Output</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="edit3d-row">
+              <div class="edit3d-example">
+                <p class="edit3d-prompt" align="center">the shade is bigger</p>
+                <div class="edit3d-quad">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/wideshade/original_slat.glb"
+                      alt="Input"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Input</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/wideshade/original_abstraction.glb"
+                      alt="Original Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/wideshade/edited_abstraction_categorized.glb"
+                      alt="Edited Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Edited Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/wideshade/appearance_edited_mesh.glb"
+                      alt="Output"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Output</div>
+                  </div>
+                </div>
+              </div>
+              <div class="edit3d-example">
+                <p class="edit3d-prompt" align="center">
+                  the top is more narrow
+                </p>
+                <div class="edit3d-quad">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/pingpong/original_slat.glb"
+                      alt="Input"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Input</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/pingpong/original_abstraction.glb"
+                      alt="Original Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/pingpong/edited_abstraction_categorized.glb"
+                      alt="Edited Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Edited Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/pingpong/appearance_edited_mesh.glb"
+                      alt="Output"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Output</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="edit3d-row">
+              <div class="edit3d-example">
+                <p class="edit3d-prompt" align="center">
+                  there is no stretcher connecting the front legs
+                </p>
+                <div class="edit3d-quad">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/no_stretcher/original_slat.glb"
+                      alt="Input"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Input</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/no_stretcher/original_abstraction.glb"
+                      alt="Original Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/no_stretcher/edited_abstraction_categorized.glb"
+                      alt="Edited Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Edited Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/no_stretcher/appearance_edited_mesh.glb"
+                      alt="Output"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Output</div>
+                  </div>
+                </div>
+              </div>
+              <div class="edit3d-example">
+                <p class="edit3d-prompt" align="center">
+                  the table has a sub-table underneath
+                </p>
+                <div class="edit3d-quad">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/pool/original_slat.glb"
+                      alt="Input"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Input</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/pool/original_abstraction.glb"
+                      alt="Original Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/pool/edited_abstraction_categorized.glb"
+                      alt="Edited Proxy"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Edited Proxy</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/shapetalk_results/pool/appearance_edited_mesh.glb"
+                      alt="Output"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Output</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--     BibTex-->
+      <section class="bib-section" width="100%">
+        <div class="bib-container">
+          <hr />
+          <h2 align="center">BibTeX</h2>
+          <div class="code-container" align="left">
+            <code>
+              @misc{sella2026proxe,<br />
+              &emsp; title = {Prox-E: Fine-Grained {3D} Shape Editing via
+              Primitive-Based Abstractions},<br />
+              &emsp; author = {Sella, Etai and Phung, Hao and Amiel, Nitay and
+              Litany, Or and Patashnik, Or and Averbuch-Elor, Hadar},<br />
+              &emsp; year = {2026},<br />
+              &emsp; note = {arXiv and venue fields to be added}<br />
+              }
+            </code>
+          </div>
+        </div>
+      </section>
+
+      <!--    Acknowledgements -->
+      <section class="ack-section" width="100%">
+        <div class="ack-container">
+          <hr />
+          <h2 align="center">Acknowledgements</h2>
+          <p>Acknowledgements will be updated for the camera-ready version.</p>
+        </div>
+      </section>
+
+      <p><br /></p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+    </div>
+    <script defer src="./webpage_assets/js/edit3d-sync-cameras.js"></script>
+  </body>
+</html>

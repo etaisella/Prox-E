@@ -306,7 +306,8 @@ p {
     font-size: 17px;
 }
 
-.method-container {
+.method-container,
+.motivation-container {
     width: 65%;
     margin: 0 auto;
     margin-bottom: 30px;
