@@ -208,125 +208,21 @@
         </div>
       </section>
 
-      <!-- motivation -->
-      <section class="motivation-section" width="100%">
-        <div class="method-container">
-          <hr />
-          <h2 align="center">Motivation</h2>
-          <br />
-          <div
-            class="im_container im_container_wide method-structure-frame has-text-justified"
-            align="center"
-          >
-            <img
-              src="./webpage_assets/images/2d_editor_motivation.png"
-              alt="2D Editor failures, motivation"
-              style="max-width: 100%; width: 60%; display: block; margin: auto"
-            />
-          </div>
-
-          <p class="has-text-justified">
-            2D editors excel at modifying object appearance and adding new
-            objects, such as making the chair fencier and inserting the bunny.
-            However, they fall short on geometric editing, which requires an
-            understanding of 3D parameters to produce accurate results.
-          </p>
-          <p class="has-text-justified">
-            Despite this, the majority of 3D editing methods still rely on these
-            2D editors to carry out the edits.
-          </p>
-        </div>
-      </section>
-
-      <!-- method -->
-      <section class="method-section" width="100%">
-        <div class="method-container">
-          <hr />
-          <h2 align="center">How does it work?</h2>
-          <br />
-          <p class="has-text-justified">
-            Given an input 3D shape and a text prompt, Prox-E first abstracts
-            the shape into a primitive-based proxy, edits that proxy using a VLM
-            agent to specify structure-aware modifications, and then uses the
-            edited proxy to drive a 3D Generative Backbone. Finally, appearance
-            is refined using 2D image editors to produce the final edited shape.
-          </p>
-          <br />
-          <div
-            class="im_container im_container_wide method-structure-frame has-text-justified"
-            align="center"
-          >
-            <img
-              src="./webpage_assets/images/method_overview.svg"
-              alt="Prox-E pipeline: geometric abstraction, VLM editing, and 3D generation"
-            />
-          </div>
-          <p class="has-text-justified">
-            These edits guide a proxy-induced denoising process by blending
-            inverted latents from the original structure (yellow), warped shape
-            (blue) and edited proxy (purple) to generate an updated structure
-            while preserving object identity.
-          </p>
-          <br />
-          <div
-            class="im_container im_container_wide method-structure-frame has-text-justified"
-            align="center"
-          >
-            <img
-              src="./webpage_assets/images/proxy_induced_generation.svg"
-              alt="Proxy-induced generation"
-            />
-          </div>
-          <br />
-
-          <h3 class="method-subheading" align="center">
-            Structure Editing with a VLM
-          </h3>
-          <div
-            class="im_container im_container_wide method-structure-frame has-text-justified"
-            align="center"
-          >
-            <img
-              src="./webpage_assets/images/vlm_process.svg"
-              alt="VLM editing"
-            />
-          </div>
-          <p class="has-text-justified">
-            We perform structure editing with a VLM agent to produce an edited
-            proxy. The VLM agent receives as input the proxy's JSON file—where
-            each primitive is described by its scale, rotation, translation, and
-            shape exponent parameters—a text editing instruction, the rendering
-            of the original shape, and multi-view renderings of the proxy. By
-            integrating these modalities, the VLM reasons over the primitive
-            parameters to produce an updated JSON file, which is used to
-            generate new multi-view renderings of the edited proxy. This process
-            repeats iteratively until the edit is confirmed or the maximum
-            number of iterations is reached.
-          </p>
-        </div>
-      </section>
-
       <!-- Edit3D-Bench mesh results -->
       <section class="edit3d-bench-section" width="100%">
         <div class="edit3d-bench-container">
           <hr />
           <h2 align="center">Results on Edit3D-bench</h2>
           <p class="edit3d-bench-intro has-text-justified">
-            Interactive <strong>glTF / GLB</strong> viewers — drag on any mesh
-            in a column to orbit
-            <strong>all four meshes in that column</strong> together. Each row
-            shows two editing examples (fox / elephant, then cactus / building);
-            for each example, meshes are shown in order: input shape, original
-            proxy abstraction, edited proxy abstraction, and final output.
-          </p>
-          <p class="edit3d-bench-note has-text-justified">
-            <strong>Note:</strong> Browsers often block loading these models
-            when the page is opened as a local file (<code>file://</code>). Run
-            a local server from the project folder instead, for example:
-            <code class="edit3d-code">python3 -m http.server 8000</code>
-            then open <code class="edit3d-code">http://localhost:8000/</code>.
-            When the site is served over HTTP or HTTPS (for example GitHub
-            Pages), the viewers load normally.
+            We present results on Edit3D-Bench, introduced in
+            <a href="https://huanngzh.github.io/VoxHammer-Page/" target="_blank" rel="noopener noreferrer">VoxHammer</a>. Each column shows, in order: input, original proxy, edited
+            proxy, and output. In the proxies, unchanged primitives are
+            <span class="edit3d-legend-color edit3d-legend-gray">gray</span>, edited
+            primitives are
+            <span class="edit3d-legend-color edit3d-legend-blue">blue</span>, and
+            new primitives are
+            <span class="edit3d-legend-color edit3d-legend-pink">pink</span>. Click
+            and drag to orbit the meshes.
           </p>
 
           <div class="edit3d-bench-grid">
@@ -588,14 +484,15 @@
           <hr />
           <h2 align="center">Results on ShapeTalk</h2>
           <p class="edit3d-bench-intro has-text-justified">
-            Same setup as above: four meshes per example (Input, Original Proxy,
-            Edited Proxy, Output), with
-            <strong>linked orbit</strong> within each column. Six ShapeTalk
-            examples are shown in three rows (two per row). Results are loaded
-            from
-            <code class="edit3d-code"
-              >webpage_assets/meshes/shapetalk_results/</code
-            >.
+            We present results on the ShapeTalk benchmark, from
+            <a href="https://changeit3d.github.io/" target="_blank" rel="noopener noreferrer">ShapeTalk / ChangeIt3D</a>. Each column shows, in order: input, original proxy, edited
+            proxy, and output. In the proxies, unchanged primitives are
+            <span class="edit3d-legend-color edit3d-legend-gray">gray</span>, edited
+            primitives are
+            <span class="edit3d-legend-color edit3d-legend-blue">blue</span>, and
+            new primitives are
+            <span class="edit3d-legend-color edit3d-legend-pink">pink</span>. Click
+            and drag to orbit the meshes.
           </p>
 
           <div class="edit3d-bench-grid">
@@ -958,6 +855,139 @@
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- motivation -->
+      <section class="motivation-section" width="100%">
+        <div class="method-container">
+          <hr />
+          <h2 align="center">Motivation</h2>
+          <br />
+          <div
+            class="im_container method-structure-frame method-structure-figure-tight has-text-justified"
+            align="center"
+          >
+            <img
+              src="./webpage_assets/images/motivation2.png"
+              alt="2D Editor failures, motivation"
+            />
+          </div>
+
+          <p class="has-text-justified">
+            Modern 2D editors are remarkably good at changing appearance or 
+            inserting new semantic content, but fine-grained structural edits 
+            pose a different challenge. These edits require reasoning about the 
+            geometry of existing parts and how they should change in 3D, often in 
+            explicitly metric terms, such as making the legs 1.5x longer or 
+            lowering the seat by a specific amount, rather than just synthesizing 
+            plausible pixels. This creates a gap between what image-based editors are 
+            optimized for and what controllable 3D editing actually demands.
+          </p>
+        </div>
+      </section>
+
+      <!-- method -->
+      <section class="method-section" width="100%">
+        <div class="method-container">
+          <hr />
+          <h2 align="center">How does it work?</h2>
+          <br />
+      
+          <p class="has-text-justified">
+            Prox-E turns fine-grained text instructions into controlled 3D edits by first
+            abstracting a shape into simple geometric primitives, editing that abstraction
+            with a VLM, and then using it to guide 3D generation and appearance refinement.
+          </p>
+          <br />
+      
+          <p class="has-text-justified">
+            🧱 <strong>Primitive-based abstraction.</strong>
+            Given an input 3D shape and an editing prompt, we first convert the shape into a
+            compact proxy made of superquadrics. This proxy provides a simple, structured
+            representation that is easier to edit than the raw 3D geometry itself.
+          </p>
+          <br />
+      
+          <p class="has-text-justified">
+            👀 <strong>VLM-driven proxy editing.</strong>
+            We render multi-view images of the proxy and provide them to a VLM together with
+            an image of the original shape, the editing prompt, and the proxy in JSON format.
+            The VLM then updates the primitive parameters directly, producing an edited proxy
+            JSON that reflects the requested structural change.
+          </p>
+          <br />
+      
+          <p class="has-text-justified">
+            🔁 <strong>Iterative verification and correction.</strong>
+            This editing process can be repeated: after obtaining an edited proxy, we render
+            it again and feed the new views back to the VLM, allowing it to verify the edit
+            or make further corrections when needed.
+          </p>
+          <br />
+      
+          <div
+            class="im_container im_container_wide method-structure-frame has-text-justified"
+            align="center"
+          >
+            <img
+              src="./webpage_assets/images/vlm_process.svg"
+              alt="Placeholder for VLM proxy editing"
+            />
+          </div>
+          <br />
+      
+          <p class="has-text-justified">
+            🧭 <strong>Proxy-guided structure generation.</strong>
+            Once the edited proxy is ready, we use it to guide TRELLIS during sparse-structure
+            generation. To do this, we classify primitives into three categories and inject a
+            different source of information for each one.
+          </p>
+          <br />
+      
+          <p class="has-text-justified">
+            🟡 <strong>Unchanged regions preserve the original shape.</strong>
+            Primitives that remain unchanged mark parts of the object that should stay intact.
+            In these regions, we inject inverted latents from the original shape to preserve
+            its structure and identity.
+          </p>
+          <br />
+      
+          <p class="has-text-justified">
+            🟣 <strong>New regions follow the edited proxy.</strong>
+            Newly added primitives indicate regions where new structure should emerge. There,
+            we inject the edited proxy, but only for a limited number of denoising steps, so
+            the model can move beyond the coarse primitive geometry and generate a natural result.
+          </p>
+          <br />
+      
+          <p class="has-text-justified">
+            🔵 <strong>Edited regions are warped from the original.</strong>
+            For primitives whose pose or scale changed, we estimate the transformation from
+            the original primitive to the edited one, warp the original shape accordingly,
+            and inject this warped structure. This helps preserve fine geometric details while
+            relocating them to their new position.
+          </p>
+          <br />
+      
+          <div
+            class="im_container im_container_wide method-structure-frame has-text-justified"
+            align="center"
+          >
+            <img
+              src="./webpage_assets/images/structure_edit.png"
+              alt="Placeholder for proxy-guided structure generation"
+            />
+          </div>
+          <br />
+      
+          <p class="has-text-justified">
+            🎨 <strong>Appearance refinement for final details.</strong>
+            After generating the edited sparse structure, we refine appearance and fine details
+            using TRELLIS’s appearance branch together with a strong 2D image editor. This lets
+            us introduce high-quality appearance changes while still preserving the original
+            object where needed.
+          </p>
         </div>
       </section>
 

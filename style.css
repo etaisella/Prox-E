@@ -339,6 +339,22 @@ p {
     border: 1px solid var(--border-subtle);
 }
 
+.edit3d-legend-color {
+    font-weight: 600;
+}
+
+.edit3d-legend-gray {
+    color: #6b7280;
+}
+
+.edit3d-legend-blue {
+    color: #2563eb;
+}
+
+.edit3d-legend-pink {
+    color: #c026d3;
+}
+
 .edit3d-code {
     font-family: 'Space Mono', monospace;
     font-size: 13px;
@@ -474,6 +490,14 @@ p {
     margin-left: -10%;
 }
 
+/* ~72% of column: same visual size as 60% image inside 120% wide, without oversized frame */
+.im_container_narrow {
+    width: 72%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .im_container img {
     width: 100%;
     height: auto;
@@ -494,6 +518,29 @@ p {
 .method-structure-frame img {
     box-shadow: none;
     border-radius: 6px;
+}
+
+/* Shrink the card to the image (e.g. motivation) instead of full column + im_container_wide */
+.method-structure-figure-tight {
+    display: table;
+    width: auto;
+    max-width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.method-structure-frame.method-structure-figure-tight {
+    padding-top: clamp(16px, 2.8vw, 32px);
+    padding-bottom: clamp(16px, 2.8vw, 32px);
+    padding-left: clamp(3px, 0.45vw, 5px);
+    padding-right: clamp(3px, 0.45vw, 5px);
+}
+
+.im_container.method-structure-figure-tight img {
+    width: auto;
+    max-width: min(650px, 90%);
+    height: auto;
+    margin: 0 auto;
 }
 
 .figure-caption {
