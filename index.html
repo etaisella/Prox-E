@@ -59,7 +59,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
     />
-    <link href="style.css?v=7" rel="stylesheet" type="text/css" />
+    <link href="style.css?v=12" rel="stylesheet" type="text/css" />
     <script
       type="module"
       src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
@@ -124,7 +124,7 @@
         <div class="publication-links" align="center">
           <!-- arxiv link -->
           <span class="link-block">
-            <a href="#" class="paper-link" style="display: inline-block">
+            <a href="https://arxiv.org/abs/2604.23774" class="paper-link" style="display: inline-block">
               <button class="button">
                 <span class="icon">
                   <i class="ai ai-arxiv"></i>
@@ -150,7 +150,7 @@
 
       <div class="introvid" id="site-teaser">
         <video
-          src="./teaser_vid/teaser_vid_premier_0.mp4"
+          src="./teaser_vid/teaser_vid_0.mp4"
           autoplay
           muted
           loop
@@ -894,7 +894,7 @@
           <br />
       
           <p class="has-text-justified">
-            Prox-E turns fine-grained text instructions into controlled 3D edits by first
+            Prox-E performs fine-grained 3D shape editing by first
             abstracting a shape into simple geometric primitives, editing that abstraction
             with a VLM, and then using it to guide 3D generation and appearance refinement.
           </p>
@@ -902,9 +902,8 @@
       
           <p class="has-text-justified">
             🧱 <strong>Primitive-based abstraction.</strong>
-            Given an input 3D shape and an editing prompt, we first convert the shape into a
-            compact proxy made of superquadrics. This proxy provides a simple, structured
-            representation that is easier to edit than the raw 3D geometry itself.
+            Given an input 3D shape, we first convert the shape into a
+            compact proxy made of superquadrics.
           </p>
           <br />
       
@@ -947,16 +946,15 @@
           <p class="has-text-justified">
             🟡 <strong>Unchanged regions preserve the original shape.</strong>
             Primitives that remain unchanged mark parts of the object that should stay intact.
-            In these regions, we inject inverted latents from the original shape to preserve
-            its structure and identity.
+            In these regions, we inject information from the original shape to preserve its structure and identity.
           </p>
           <br />
       
           <p class="has-text-justified">
             🟣 <strong>New regions follow the edited proxy.</strong>
             Newly added primitives indicate regions where new structure should emerge. There,
-            we inject the edited proxy, but only for a limited number of denoising steps, so
-            the model can move beyond the coarse primitive geometry and generate a natural result.
+            we inject the edited proxy, but only for a limited number of denoising steps, in order to allow the model to 
+            produce a more natural and detailed structure in these parts.
           </p>
           <br />
       
@@ -964,8 +962,7 @@
             🔵 <strong>Edited regions are warped from the original.</strong>
             For primitives whose pose or scale changed, we estimate the transformation from
             the original primitive to the edited one, warp the original shape accordingly,
-            and inject this warped structure. This helps preserve fine geometric details while
-            relocating them to their new position.
+            and inject information from this warped shape into the denoising process.
           </p>
           <br />
       
@@ -983,12 +980,319 @@
           <p class="has-text-justified">
             🎨 <strong>Appearance refinement for final details.</strong>
             After generating the edited sparse structure, we refine appearance and fine details
-            using TRELLIS’s appearance branch together with a strong 2D image editor. This lets
-            us introduce high-quality appearance changes while still preserving the original
-            object where needed.
+            using TRELLIS’s appearance model, the edited proxy, and optionally a strong 2D image editor.
           </p>
         </div>
       </section>
+
+      <!-- Comparisons (ShapeTalk vs. baselines) -->
+      <section
+        class="edit3d-bench-section comparisons-section"
+        width="100%"
+      >
+        <div class="edit3d-bench-container">
+          <hr />
+          <h2 align="center">Comparisons</h2>
+          <p class="edit3d-bench-intro has-text-justified">
+            We present qualitative samples from the
+            <a href="https://changeit3d.github.io/" target="_blank" rel="noopener noreferrer">ShapeTalk</a>
+            benchmark, comparing our method against
+            <a href="https://dl.acm.org/doi/abs/10.1145/3641519.3657461" target="_blank" rel="noopener noreferrer">Spice-E</a>,
+            <a href="https://arxiv.org/abs/2506.20652" target="_blank" rel="noopener noreferrer">EditP23</a>,
+            <a href="https://huanngzh.github.io/VoxHammer-Page/" target="_blank" rel="noopener noreferrer">VoxHammer</a>,
+            and
+            <a href="https://arxiv.org/abs/2506.20652" target="_blank" rel="noopener noreferrer">TRELLIS</a>
+            with
+            <a href="https://bfl.ai/models/flux-kontext" target="_blank" rel="noopener noreferrer">Kontext</a>.
+            Click and drag on any mesh to orbit; cameras stay aligned within each row.
+          </p>
+
+          <div class="edit3d-bench-grid">
+            <div class="edit3d-row comparisons-stack-row">
+              <div class="edit3d-example comparisons-example">
+                <p class="edit3d-prompt" align="center">
+                  make the shade shorter
+                </p>
+                <div class="edit3d-quad comparisons-hex">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer comparisons-lamp-original-lifted"
+                      src="./webpage_assets/meshes/comparisons/lamp/original.glb"
+                      alt="Original"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      exposure="1.06"
+                      interpolation-decay="0"
+                      shadow-intensity="0.92"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/lamp/Spice-E.glb"
+                      alt="Spice-E"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Spice-E</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/lamp/EditP23.glb"
+                      alt="EditP23"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">EditP23</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/lamp/VoxHammer.glb"
+                      alt="VoxHammer"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">VoxHammer</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/lamp/TRELLIS.glb"
+                      alt="TRELLIS + Kontext"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">TRELLIS+Kontext</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/lamp/ours.glb"
+                      alt="Prox-E"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Prox-E</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="edit3d-example comparisons-example">
+                <p class="edit3d-prompt" align="center">
+                  add a footrest
+                </p>
+                <div class="edit3d-quad comparisons-hex">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer comparisons-chair-original-bright"
+                      src="./webpage_assets/meshes/comparisons/chair/original.glb"
+                      alt="Original"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      exposure="1.18"
+                      interpolation-decay="0"
+                      shadow-intensity="0.85"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/chair/Spice-E.glb"
+                      alt="Spice-E"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Spice-E</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/chair/EditP23.glb"
+                      alt="EditP23"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">EditP23</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/chair/VoxHammer.glb"
+                      alt="VoxHammer"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">VoxHammer</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/chair/TRELLIS.glb"
+                      alt="TRELLIS + Kontext"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">TRELLIS+Kontext</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/chair/ours.glb"
+                      alt="Prox-E"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Prox-E</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="edit3d-example comparisons-example">
+                <p class="edit3d-prompt" align="center">
+                  make the table shorter
+                </p>
+                <div class="edit3d-quad comparisons-hex">
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer edit3d-viewer-warm-tone"
+                      src="./webpage_assets/meshes/comparisons/table/original.glb"
+                      alt="Original"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      exposure="0.88"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Original</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/table/Spice-E.glb"
+                      alt="Spice-E"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Spice-E</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/table/EditP23.glb"
+                      alt="EditP23"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">EditP23</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/table/VoxHammer.glb"
+                      alt="VoxHammer"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">VoxHammer</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/table/TRELLIS.glb"
+                      alt="TRELLIS + Kontext"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">TRELLIS+Kontext</div>
+                  </div>
+                  <div class="edit3d-cell">
+                    <model-viewer
+                      class="edit3d-viewer"
+                      src="./webpage_assets/meshes/comparisons/table/ours.glb"
+                      alt="Prox-E"
+                      camera-controls
+                      field-of-view="30deg"
+                      environment-image="neutral"
+                      interpolation-decay="0"
+                      shadow-intensity="1"
+                      camera-orbit="0deg 75deg 125%"
+                    ></model-viewer>
+                    <div class="edit3d-mesh-label">Prox-E</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
 
       <!--     BibTex-->
       <section class="bib-section" width="100%">
@@ -997,13 +1301,15 @@
           <h2 align="center">BibTeX</h2>
           <div class="code-container" align="left">
             <code>
-              @misc{sella2026proxe,<br />
-              &emsp; title = {Prox-E: Fine-Grained {3D} Shape Editing via
-              Primitive-Based Abstractions},<br />
-              &emsp; author = {Sella, Etai and Phung, Hao and Amiel, Nitay and
-              Litany, Or and Patashnik, Or and Averbuch-Elor, Hadar},<br />
-              &emsp; year = {2026},<br />
-              &emsp; note = {arXiv and venue fields to be added}<br />
+              @misc{sella2026proxefinegrained3dshape,<br />
+              &emsp; title={Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions},<br />
+              &emsp; author={Etai Sella and Hao Phung and Nitay Amiel and Or Litany and Or Patashnik and Hadar Averbuch-Elor},<br />
+              &emsp; year={2026},<br />
+              &emsp; eprint={2604.23774},<br />
+              &emsp; archivePrefix={arXiv},<br />
+              &emsp; primaryClass={cs.GR},<br />
+              &emsp; eprint={2604.23774},<br />
+              &emsp; url={https://arxiv.org/abs/2604.23774}, <br />
               }
             </code>
           </div>
@@ -1015,7 +1321,7 @@
         <div class="ack-container">
           <hr />
           <h2 align="center">Acknowledgements</h2>
-          <p>Acknowledgements will be updated for the camera-ready version.</p>
+          <p>We thank Prof. Daniel Cohen-Or for his valuable feedback and suggestions in early stages of the project.</p>
         </div>
       </section>
 

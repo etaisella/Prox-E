@@ -457,6 +457,10 @@ p {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .edit3d-quad.comparisons-hex {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .edit3d-viewer {
         height: 190px;
     }
@@ -465,6 +469,48 @@ p {
 @media (max-width: 480px) {
     .edit3d-viewer {
         height: 160px;
+    }
+}
+
+/* Comparisons: one full-width example × six GLB viewers (linked orbit per row) */
+.edit3d-row.comparisons-stack-row {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.comparisons-example {
+    flex: 1 1 100%;
+    max-width: 100%;
+    width: 100%;
+}
+
+.edit3d-quad.comparisons-hex {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.edit3d-quad.comparisons-hex .edit3d-mesh-label {
+    font-size: 12px;
+}
+
+/* Chair row: lift Original mesh (was warm-tone + low exposure, read dark) */
+.edit3d-viewer.comparisons-chair-original-bright {
+    filter: brightness(3.82) contrast(0.8) saturate(0.8);
+}
+
+/* Lamp row: gentler lift than chair — exposure-led; subtle warmth in CSS */
+.edit3d-viewer.comparisons-lamp-original-lifted {
+    filter: brightness(3.05) saturate(1.15) contrast(0.7) sepia(0.06) hue-rotate(-6deg);
+}
+
+@media (max-width: 1024px) {
+    .edit3d-quad.comparisons-hex {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .edit3d-quad.comparisons-hex {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 

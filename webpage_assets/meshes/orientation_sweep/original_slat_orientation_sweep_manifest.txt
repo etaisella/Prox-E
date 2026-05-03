@@ -1,0 +1,19 @@
+# orientation sweep meshes: original_slat
+# source: /nfs/usr/esella/mys3gallery/000_tredit_redo_from_data_prep/chair/3LRKMWOKB7AENUZYO3SYFMK83C2Z22/original_slat.glb
+# idx	transform_name	glb_filename
+0	none	original_slat_orient_00_none.glb
+1	flip_z	original_slat_orient_01_flip_z.glb
+2	flip_y	original_slat_orient_02_flip_y.glb
+3	flip_x	original_slat_orient_03_flip_x.glb
+4	flip_y_and_z	original_slat_orient_04_flip_y_and_z.glb
+5	swap_y_z	original_slat_orient_05_swap_y_z.glb
+6	swap_y_z_flip_z	original_slat_orient_06_swap_y_z_flip_z.glb
+7	swap_y_z_flip_y	original_slat_orient_07_swap_y_z_flip_y.glb
+8	swap_y_z_flip_both	original_slat_orient_08_swap_y_z_flip_both.glb
+9	rot_180_x	original_slat_orient_09_rot_180_x.glb
+10	rot_180_y	original_slat_orient_10_rot_180_y.glb
+11	rot_180_z	original_slat_orient_11_rot_180_z.glb
+12	rot_90_x	original_slat_orient_12_rot_90_x.glb
+13	rot_-90_x	original_slat_orient_13_rot_-90_x.glb
+14	rot_90_y	original_slat_orient_14_rot_90_y.glb
+15	rot_-90_y	original_slat_orient_15_rot_-90_y.glb
