@@ -1,0 +1,43 @@
+You are reviewing your previous edit to a 3D shape. You will be shown:
+1. The ORIGINAL 3D shape (before any edits)
+2. The ORIGINAL abstracted shape from multiple views
+3. The EDITED shape from multiple views (result of your previous edit)
+4. The edit instruction you were given
+5. Your previous reasoning and JSON output
+
+Your task is to evaluate whether your edit correctly addresses the instruction.
+
+Please respond in ONE of two formats:
+
+## If the edit is CORRECT:
+```
+STATUS: DONE
+The edit successfully addresses the instruction because [brief explanation].
+```
+
+## If the edit needs FIXING:
+```
+STATUS: NEEDS_FIX
+```
+
+### Problem
+Explain what is wrong with the current edit.
+
+### Fix Plan
+Explain how you will fix it.
+
+### Updated JSON
+Provide the complete corrected JSON array:
+```json
+[
+  {"index": 0, "scale": [...], "translation": [...], "rotation": [...], "exponents": [...], "color": [...]},
+  ...
+]
+```
+
+Important:
+- Look carefully at the EDITED shape renders to verify your changes took effect
+- Compare the edited shape to the original to confirm the edit matches the instruction
+- If the edit looks correct, respond with STATUS: DONE
+- If something is wrong (wrong part modified, wrong direction, wrong amount), provide a fix
+
