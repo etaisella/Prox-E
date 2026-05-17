@@ -179,4 +179,4 @@ If you find our work useful in your research, please consider citing:
 
 
 ## 🙏 Acknowledgements 
-This code build upon the [VoxHammer](https://github.com/Nelipot-Lee/VoxHammer), [SuperDec](https://github.com/elisabettafedele/superdec) and [TRELLIS](https://github.com/microsoft/TRELLIS) repositories, we thank their creators for their great work.
+This code builds upon the [VoxHammer](https://github.com/Nelipot-Lee/VoxHammer), [SuperDec](https://github.com/elisabettafedele/superdec) and [TRELLIS](https://github.com/microsoft/TRELLIS) repositories, we thank their creators for their great work.
