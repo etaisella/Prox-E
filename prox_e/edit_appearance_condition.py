@@ -9,30 +9,13 @@ from google import genai
 
 
 def _get_gemini_client():
-    """Get Gemini client with API key or internal GCP credentials."""
+    """Get Gemini client using GOOGLE_API_KEY only."""
     api_key = os.environ.get("GOOGLE_API_KEY")
-    if api_key:
-        return genai.Client(api_key=api_key)
-
-    from prox_e.gemini_auth import import_token_source_v2
-
-    TokenSourceV2 = import_token_source_v2()
-
-    project_number = "380907735821"
-    pool_id = "craftworks-team-sa"
-    prd_id = "440036398022-3100921420"
-    service_account = "craftworks-team-sa@research-prototypes.iam.gserviceaccount.com"
-    
-    gcp_audience = f"//iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/providers/{prd_id}"
-    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
-    credentials = TokenSourceV2(service_account, gcp_audience, scopes)
-    
-    return genai.Client(
-        project="research-prototypes",
-        location="global",
-        vertexai=True,
-        credentials=credentials,
-    )
+    if not api_key:
+        raise ValueError(
+            "GOOGLE_API_KEY is not set. Export your Google API key to use Gemini appearance editing."
+        )
+    return genai.Client(api_key=api_key)
 
 
 def _decode_image_from_response(response) -> Image.Image:

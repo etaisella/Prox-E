@@ -36,12 +36,18 @@ from prox_e.inversion import run_full_inversion, load_trellis_text_pipeline, com
 from prox_e.structure_inpainting import run_inpainting, save_voxel_artifacts
 from prox_e.appearance_editing import run_appearance_editing, load_trellis_image_pipeline, preprocess_single_image, render_for_conditioning
 
-# import ShapeTalk related functions
-from prox_e.analyze_instruction import get_single_shapetalk_example, analyze_shapetalk_prompt, save_parse_result
+from prox_e.analyze_instruction import analyze_shapetalk_prompt, save_parse_result
 from prox_e.edit_appearance_condition import edit_appearance_image
 
-# ShapeNet paths
-SHAPENET_ROOT = Path('/nfs/usr/esella/mys3gallery/shapenet')
+def _shapenet_root() -> Path:
+    """ShapeNet dataset root (required when loading samples without --input_mesh)."""
+    root = os.environ.get("SHAPENET_ROOT")
+    if not root:
+        raise ValueError(
+            "SHAPENET_ROOT is not set. Export SHAPENET_ROOT to load ShapeNet samples, "
+            "or pass --input_mesh for a custom mesh."
+        )
+    return Path(root)
 
 # Appearance injection steps when using custom appearance condition
 APPEARANCE_INJECTION_STEPS_W_EDIT = 0
@@ -110,7 +116,7 @@ def list_available_categories():
     """List all available ShapeNet categories that exist in the dataset."""
     available = {}
     for name, synset in SHAPENET_CATEGORIES.items():
-        category_path = SHAPENET_ROOT / synset
+        category_path = _shapenet_root() / synset
         if category_path.exists():
             available[name] = synset
     return available
@@ -125,7 +131,7 @@ def get_category_samples(category_name):
         raise ValueError(f"Category '{category_name}' not found. Available: {', '.join(sorted(available))}")
     
     synset_id = SHAPENET_CATEGORIES[category_name]
-    category_path = SHAPENET_ROOT / synset_id
+    category_path = _shapenet_root() / synset_id
     
     if not category_path.exists():
         raise ValueError(f"Category path does not exist: {category_path}")
@@ -143,7 +149,7 @@ def get_random_sample(category_name):
         raise ValueError(f"Category '{category_name}' not found. Available: {', '.join(sorted(available))}")
     
     synset_id = SHAPENET_CATEGORIES[category_name]
-    category_path = SHAPENET_ROOT / synset_id
+    category_path = _shapenet_root() / synset_id
     
     if not category_path.exists():
         raise ValueError(f"Category path does not exist: {category_path}")
@@ -172,7 +178,7 @@ def get_sample_by_id(category_name, sample_id):
         raise ValueError(f"Category '{category_name}' not found. Available: {', '.join(sorted(available))}")
     
     synset_id = SHAPENET_CATEGORIES[category_name]
-    sample_path = SHAPENET_ROOT / synset_id / sample_id
+    sample_path = _shapenet_root() / synset_id / sample_id
     
     if not sample_path.exists():
         raise ValueError(f"Sample not found: {sample_path}")
@@ -249,34 +255,12 @@ def parse_args():
                         help='Optional path to a custom image for appearance editing conditioning (overrides default)')
     parser.add_argument('--appearance_edit_model', type=str, default='kontext', choices=['gemini', 'kontext'],
                         help='Model to use for editing appearance condition image (default: gemini)')
-    parser.add_argument('--test_on_shapetalk', action='store_true',
-                        help='test pipeline on a single ShapeTalk example')
-    parser.add_argument('--skip_instruction_parsing', action='store_true',
-                        help='Skip parsing the edit instruction (use default prompts)')
-    parser.add_argument('--no_structural_description', action='store_true',
-                        help='Use raw edit instruction instead of parsed structural description')
-    parser.add_argument('--test_set', type=str, default=None,
-                        help='Path to test set CSV file (format identical to ShapeTalk)')
-    parser.add_argument('--s3bucket_path', type=str, default=None,
-                        help='Path to S3 bucket folder to copy results to (used with --test_set)')
-    parser.add_argument('--resume_from', type=str, default=None,
-                        help='Path to existing output folder to resume from')
-    parser.add_argument('--do_appearance_edit_injection', action='store_true',
-                        help='Enable edit region injection during appearance editing (experimental)')
-    parser.add_argument('--ablation', type=str, default=None, const='no_appearance_refinement', nargs='?',
-                        help='Run ablation tests (default ablation: no_appearance_refinement)')
-    parser.add_argument('--no_edit_injection', action='store_true',
-                        help='Use abstraction latents instead of warped shape latents in structure inpainting')
-    parser.add_argument('--no_preserve_injection', action='store_true',
-                        help='Use abstraction latent instead of inverted original for preserve regions in structure inpainting')
-    parser.add_argument('--parametric_mode', action='store_true',
-                        help='Parametric editing mode: skip instruction parsing, use raw edit instruction for VLM editing, use "a <category>" for inpainting')
     parser.add_argument('--shade_smooth', action='store_true',
                         help='Use smooth shading for inversion multi-view renders and conditioning_render.png '
                              '(original.png and output.png always use smooth shading)')
     parser.add_argument('--edit3dbench', action='store_true',
                         help='Edit3D-Bench mode: do not rotate the mesh on x axis')
-    parser.add_argument('--orientation_index', type=int, default=None,
+    parser.add_argument('--orientation_index', type=int, default=0,
                         help='Orientation index from scripts/orientation_sweep.py for custom input meshes')
     return parser.parse_args()
 
@@ -447,37 +431,41 @@ def editing_pipeline(args, sample_path: Path, sample_id: str, text_pipeline=None
     appearance_description = f"a {category}"
     instruction_parse_data = None
     
-    if not args.skip_instruction_parsing and not args.parametric_mode:
-        print("\n" + "="*80)
-        print("PARSING EDIT INSTRUCTION")
-        print("="*80)
-        
-        parse_result_path = sample_output_folder / "instruction_parse_result.txt"
-        cached = load_parse_result(parse_result_path, category) if instruction_matches else None
-        
-        if cached:
-            structural_description = cached['structural_description']
-            appearance_description = cached['appearance_description']
-            print(f"  Loaded from cache: {parse_result_path}")
-        else:
-            parse_result = analyze_shapetalk_prompt(
-                prompt=args.edit_instruction,
-                category=category,
-                backend="gemini",
-                gemini_model=args.gemini_parse_model,
-            )
-            structural_description = parse_result['structural_description'] or f"a {category}"
-            appearance_description = parse_result['appearance_description'] or f"a {category}"
-            save_parse_result(parse_result, parse_result_path)
-        
-        print(f"  Structural: {structural_description}")
-        print(f"  Appearance: {appearance_description}")
-        
-        instruction_parse_data = {
-            'structural_description': structural_description,
-            'appearance_description': appearance_description,
-            'token_usage': None if cached else parse_result.get('token_usage'),
-        }
+    print("\n" + "="*80)
+    print("PARSING EDIT INSTRUCTION")
+    print("="*80)
+
+    parse_result_path = sample_output_folder / "instruction_parse_result.txt"
+    cached = load_parse_result(parse_result_path, category) if instruction_matches else None
+
+    if cached:
+        structural_description = cached['structural_description']
+        appearance_description = cached['appearance_description']
+        print(f"  Loaded from cache: {parse_result_path}")
+    else:
+        parse_backend = "gemini"
+        parse_kwargs = {"gemini_model": args.gemini_parse_model}
+        if args.vlm == "gpt":
+            parse_backend = "gpt"
+            parse_kwargs = {"gpt_model": args.gpt_model}
+        parse_result = analyze_shapetalk_prompt(
+            prompt=args.edit_instruction,
+            category=category,
+            backend=parse_backend,
+            **parse_kwargs,
+        )
+        structural_description = parse_result['structural_description'] or f"a {category}"
+        appearance_description = parse_result['appearance_description'] or f"a {category}"
+        save_parse_result(parse_result, parse_result_path)
+
+    print(f"  Structural: {structural_description}")
+    print(f"  Appearance: {appearance_description}")
+
+    instruction_parse_data = {
+        'structural_description': structural_description,
+        'appearance_description': appearance_description,
+        'token_usage': None if cached else parse_result.get('token_usage'),
+    }
     
     # === STEP 1: VLM Editing ===
     vlm_outputs_exist = edited_json_path.exists()
@@ -491,18 +479,11 @@ def editing_pipeline(args, sample_path: Path, sample_id: str, text_pipeline=None
         edited_mesh.export(str(edited_obj_path))
         print(f"Generated edited OBJ from JSON: {edited_obj_path}")
     
-    # Determine if we should skip VLM editing due to no structural changes
-    # In parametric_mode, always run VLM editing (don't skip based on structural_description)
-    no_structural_changes = (
-        not args.parametric_mode and
-        not args.no_structural_description and 
-        structural_description == f"a {category}"
+    no_structural_changes = structural_description == f"a {category}"
+
+    vlm_edit_instruction = (
+        structural_description if not no_structural_changes else args.edit_instruction
     )
-    
-    # Determine the edit instruction to use
-    vlm_edit_instruction = args.edit_instruction
-    if not args.parametric_mode and not args.no_structural_description and not no_structural_changes:
-        vlm_edit_instruction = structural_description
     
     step_start = time.time()
     if no_structural_changes:
@@ -614,8 +595,7 @@ def editing_pipeline(args, sample_path: Path, sample_id: str, text_pipeline=None
 
     # === STEP 3: Inversion ===
     inversion_prompt = f"a {category}"
-    # In parametric_mode, use simple category prompt for inpainting; otherwise use parsed structural description
-    inpainting_prompt = f"a {category}" if args.parametric_mode else structural_description
+    inpainting_prompt = structural_description
     inversion_latents_path = sample_output_folder / "inversion" / "original_shape_ss_latents.pt"
     abs_inversion_latents_path = sample_output_folder / "inversion" / "abstraction_ss_latents.pt"
     slat_latents_path = sample_output_folder / "inversion" / "original_shape_slat_latents.pt"
@@ -741,10 +721,10 @@ def editing_pipeline(args, sample_path: Path, sample_id: str, text_pipeline=None
             abstraction_injection_steps=args.abstraction_injection_steps,
             render_fn=render_obj_with_blender,
             merging_data=merging_data,
-            transformed_mesh_latents=None if args.no_edit_injection else (transformed_mesh_latents if transformed_mesh_latents else None),
+            transformed_mesh_latents=transformed_mesh_latents if transformed_mesh_latents else None,
             normalization=normalization_data,
             inject_original=args.inject_original,
-            no_preserve_injection=args.no_preserve_injection,
+            no_preserve_injection=False,
         )
         torch.save(voxels, inpainted_voxels_path)
         print(f"Saved inpainted voxels to: {inpainted_voxels_path}")
@@ -786,10 +766,9 @@ def editing_pipeline(args, sample_path: Path, sample_id: str, text_pipeline=None
     # Check if we need to edit appearance based on parsed instruction
     print(f"Appearance description: {appearance_description}")
     use_edited_appearance = (
-        appearance_description != f"a {category}" and 
-        appearance_description != f"an {category}" and
-        not args.appearance_condition_path and
-        not args.skip_instruction_parsing
+        appearance_description != f"a {category}"
+        and appearance_description != f"an {category}"
+        and not args.appearance_condition_path
     )
     
     # Get image conditioning - REQUIRED for appearance editing
@@ -862,7 +841,7 @@ def editing_pipeline(args, sample_path: Path, sample_id: str, text_pipeline=None
         appearance_injection_steps=appearance_steps,
         edit_dilation_steps=args.edit_dilation_steps,
         normalization=normalization_data,
-        do_edit_injection=args.do_appearance_edit_injection,
+        do_edit_injection=False,
         abstraction_injection_steps=args.appearance_abstraction_injection_steps,
         shade_smooth=True,
     )
@@ -888,51 +867,10 @@ def editing_pipeline(args, sample_path: Path, sample_id: str, text_pipeline=None
 
 
 if __name__ == "__main__":
-    # Register this module as 'inference' so other modules (e.g. experiments.py)
-    # can `from inference import ...` without triggering a second full load.
-    sys.modules['inference'] = sys.modules[__name__]
-    
     args = parse_args()
     output_folder = Path(args.output_folder)
     output_folder.mkdir(parents=True, exist_ok=True)
-    
-    # Resume mode - continue from existing output folder
-    if args.resume_from:
-        resume_path = Path(args.resume_from)
-        # Extract category and sample_id from path (e.g., outputs/table/sample_id)
-        sample_id = resume_path.name
-        category = resume_path.parent.name
-        args.category = category
-        # Find the source mesh folder (from_shapenet or input_mesh)
-        from_shapenet = resume_path / "from_shapenet"
-        input_mesh = resume_path / "input_mesh" / "normalized.obj"
-        if from_shapenet.exists():
-            sample_path = from_shapenet
-        elif input_mesh.exists():
-            sample_path = input_mesh
-        else:
-            raise ValueError(f"Neither from_shapenet nor input_mesh/normalized.obj found in {resume_path}")
-        # Load edit instruction if exists
-        edit_file = resume_path / "edit_instruction.txt"
-        if edit_file.exists():
-            args.edit_instruction = edit_file.read_text().strip()
-        args.output_folder = str(resume_path.parent.parent)
-        editing_pipeline(args, sample_path, sample_id)
-        sys.exit(0)
-    
-    # Test set mode - run loop over entire test set
-    if args.test_set:
-        from experiments import run_test_set_loop
-        run_test_set_loop(args)
-        sys.exit(0)
-    
-    # Ablation mode - run ablation tests
-    if args.ablation:
-        from experiments import run_ablations_loop
-        run_ablations_loop(args)
-        sys.exit(0)
-    
-    # Single sample modes
+
     if args.input_mesh:
         # Direct mesh file input mode, or a local ShapeNet-style sample folder.
         input_mesh_path = Path(args.input_mesh)
@@ -949,14 +887,6 @@ if __name__ == "__main__":
             raise ValueError(
                 f"Input path must be a mesh file or contain models/model_normalized.obj: {input_mesh_path}"
             )
-    elif args.test_on_shapetalk:
-        category = args.category
-        shapetalk_example = get_single_shapetalk_example(category)
-        print(f"Loaded ShapeTalk example: {shapetalk_example}")
-        source_uid = shapetalk_example['source_uid'].split('/')[-1]
-        sample_path = get_sample_by_id(category, source_uid)
-        sample_id = sample_path.name + '_shapetalk'
-        args.edit_instruction = shapetalk_example['utterance_0']
     else:
         category = args.category
         # Load sample - either by ID or random

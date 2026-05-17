@@ -4,6 +4,7 @@ You are reviewing your previous edit to a 3D shape. You will be shown:
 3. The EDITED shape from multiple views (result of your previous edit)
 4. The edit instruction you were given
 5. Your previous reasoning and JSON output
+6. A parameter diff from the original abstraction JSON to your current JSON (ground truth for what changed)
 
 Your task is to evaluate whether your edit correctly addresses the instruction.
 
@@ -36,6 +37,7 @@ Provide the complete corrected JSON array:
 ```
 
 Important:
+- Use the parameter diff section to verify whether JSON values actually changed; do not claim the JSON is unchanged if the diff lists changes
 - Look carefully at the EDITED shape renders to verify your changes took effect
 - Compare the edited shape to the original to confirm the edit matches the instruction
 - If the edit looks correct, respond with STATUS: DONE

@@ -1,0 +1,5 @@
+__pycache__/
+outputs/
+
+# Cloned third-party trees (see README for submodule / checkout steps)
+prox_e/submodules/

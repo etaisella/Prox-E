@@ -833,32 +833,15 @@ def _parse_json_from_response(response_text: str) -> Optional[List[Dict]]:
 
 
 def _get_gemini_client():
-    """Get Gemini client with API-key auth, falling back to internal GCP auth."""
+    """Get Gemini client using GOOGLE_API_KEY only."""
     api_key = os.environ.get("GOOGLE_API_KEY")
-    if api_key:
-        from google import genai
-        return genai.Client(api_key=api_key)
-
-    from prox_e.gemini_auth import import_token_source_v2
-
-    TokenSourceV2 = import_token_source_v2()
+    if not api_key:
+        raise ValueError(
+            "GOOGLE_API_KEY is not set. Export your Google API key to use Gemini "
+            "(see README VLM Setup)."
+        )
     from google import genai
-
-    project_number = "380907735821"
-    pool_id = "creative-vision-research-sa"
-    prd_id = "440036398022-3100921420"
-    service_account = "creative-vision-research-sa@research-prototypes.iam.gserviceaccount.com"
-    
-    gcp_audience = f"//iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/providers/{prd_id}"
-    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
-    credentials = TokenSourceV2(service_account, gcp_audience, scopes)
-    
-    return genai.Client(
-        project="research-prototypes",
-        location="global",
-        vertexai=True,
-        credentials=credentials,
-    )
+    return genai.Client(api_key=api_key)
 
 
 # === Context Caching for Gemini ===
@@ -1542,6 +1525,7 @@ def edit_shape_with_vlm(
                             edit_instruction=edit_instruction,
                             previous_reasoning=final_response,
                             current_json=current_abstraction,
+                            original_json=original_abstraction,
                             model_size=model_size,
                             max_new_tokens=max_new_tokens,
                             gemini_model=gemini_model,
@@ -1685,6 +1669,83 @@ def _load_vlm_feedback_instruction() -> str:
         return f.read()
 
 
+def _values_differ(a, b, tol: float = 1e-5) -> bool:
+    """Return True if two JSON-serializable values differ (with float tolerance)."""
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)):
+        return abs(float(a) - float(b)) > tol
+    return a != b
+
+
+def _format_scalar_list_diff(field: str, before, after, tol: float = 1e-5) -> List[str]:
+    """One line per changed component in a numeric list (scale, translation, etc.)."""
+    lines: List[str] = []
+    if not isinstance(before, list) or not isinstance(after, list):
+        if _values_differ(before, after, tol):
+            lines.append(f"  - {field}: {before!r} -> {after!r}")
+        return lines
+    n = max(len(before), len(after))
+    labels = ["x", "y", "z", "w"]
+    for i in range(n):
+        b = before[i] if i < len(before) else None
+        a = after[i] if i < len(after) else None
+        if _values_differ(b, a, tol):
+            axis = labels[i] if i < len(labels) else str(i)
+            lines.append(f"  - {field}[{axis}]: {b} -> {a}")
+    return lines
+
+
+def _format_abstraction_diff(
+    original: List[Dict],
+    current: List[Dict],
+    tol: float = 1e-5,
+) -> str:
+    """
+    Human-readable summary of parameter changes between two abstraction JSON lists.
+    Used in the VLM feedback prompt so the model does not have to diff JSON from memory.
+    """
+    def _by_index(primitives: List[Dict]) -> Dict:
+        out: Dict = {}
+        for i, p in enumerate(primitives):
+            out[p.get("index", i)] = p
+        return out
+
+    orig_map = _by_index(original)
+    curr_map = _by_index(current)
+    all_indices = sorted(set(orig_map.keys()) | set(curr_map.keys()))
+
+    blocks: List[str] = []
+    for idx in all_indices:
+        if idx not in orig_map:
+            blocks.append(f"Primitive {idx}: ADDED (not in original abstraction)")
+            continue
+        if idx not in curr_map:
+            blocks.append(f"Primitive {idx}: REMOVED (omitted from current JSON)")
+            continue
+
+        o, c = orig_map[idx], curr_map[idx]
+        changes: List[str] = []
+        for field in ("scale", "translation", "exponents", "color"):
+            if field in o or field in c:
+                changes.extend(
+                    _format_scalar_list_diff(
+                        field, o.get(field), c.get(field), tol=tol
+                    )
+                )
+        if "rotation" in o or "rotation" in c:
+            if _values_differ(o.get("rotation"), c.get("rotation"), tol):
+                changes.append("  - rotation: matrix changed")
+        if not changes:
+            continue
+        blocks.append(f"Primitive {idx}:\n" + "\n".join(changes))
+
+    if not blocks:
+        return (
+            "(No numeric changes detected between the original abstraction JSON "
+            "and the current JSON.)"
+        )
+    return "\n\n".join(blocks)
+
+
 def _query_vlm_for_feedback(
     vlm: str,
     original_img_path: Path,
@@ -1693,6 +1754,7 @@ def _query_vlm_for_feedback(
     edit_instruction: str,
     previous_reasoning: str,
     current_json: List[Dict],
+    original_json: Optional[List[Dict]] = None,
     model_size: str = "4B",
     max_new_tokens: int = 4096,
     gemini_model: str = "gemini-2.5-pro",
@@ -1708,7 +1770,12 @@ def _query_vlm_for_feedback(
     
     feedback_instruction = _load_vlm_feedback_instruction()
     current_json_str = json.dumps(current_json, indent=2)
-    
+
+    if original_json is not None:
+        json_diff_summary = _format_abstraction_diff(original_json, current_json)
+    else:
+        json_diff_summary = "(Original abstraction JSON not provided for diff.)"
+
     text_prompt = f"""
 {feedback_instruction}
 
@@ -1717,6 +1784,12 @@ def _query_vlm_for_feedback(
 
 ## Your Previous Reasoning and Output
 {previous_reasoning}
+
+## Parameter changes (original abstraction JSON -> current JSON)
+Use this diff as ground truth for whether parameters changed. Do not claim the JSON is
+unchanged if this section lists changes.
+
+{json_diff_summary}
 
 ## Current JSON (result of your edit)
 ```json

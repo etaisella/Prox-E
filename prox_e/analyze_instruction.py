@@ -5,6 +5,7 @@ and convert them to actionable editing instructions.
 """
 import argparse
 import json
+import os
 import re
 from pathlib import Path
 from typing import Optional, Tuple, List, Dict
@@ -16,7 +17,14 @@ import pandas as pd
 REPO_ROOT = Path(__file__).parent.resolve()
 ANALYZE_INSTRUCTION_PATH = REPO_ROOT / "instruction_prompts" / "analyze_edit_instruction.txt"
 IN_CONTEXT_EXAMPLES_PATH = REPO_ROOT / "instruction_prompts" / "in_context_examples.json"
-SHAPETALK_CSV = '/nfs/usr/esella/mys3gallery/shapetalk/language/shapetalk_raw_public_version_0.csv'
+def _shapetalk_csv_path() -> str:
+    path = os.environ.get("SHAPETALK_CSV")
+    if not path:
+        raise ValueError(
+            "SHAPETALK_CSV is not set. Export SHAPETALK_CSV to the ShapeTalk CSV path "
+            "when using ShapeTalk example helpers."
+        )
+    return path
 
 # Module-level cache for loaded model
 _local_model = None
@@ -70,29 +78,8 @@ def _get_gemini_client():
     if api_key:
         _gemini_client = genai.Client(api_key=api_key)
         return _gemini_client
-
-    from prox_e.gemini_auth import import_token_source_v2
-
-    TokenSourceV2 = import_token_source_v2()
-
-    project_number = "380907735821"
-    pool_id = "craftworks-team-sa"
-    prd_id = "440036398022-3100921420"
-    service_account = "craftworks-team-sa@research-prototypes.iam.gserviceaccount.com"
     
-    gcp_audience = f"//iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/providers/{prd_id}"
-    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
-    credentials = TokenSourceV2(service_account, gcp_audience, scopes)
-    
-    _gemini_client = genai.Client(
-        project="research-prototypes",
-        location="global",
-        vertexai=True,
-        credentials=credentials,
-    )
-    
-    return _gemini_client
-
+    raise ValueError("No API key provided. Set GOOGLE_API_KEY environment variable.")
 
 def load_local_model(model_name: str = "Qwen/Qwen2.5-1.5B-Instruct") -> Tuple:
     """
@@ -177,12 +164,59 @@ def _analyze_with_gemini(
     }
 
 
+def _analyze_with_gpt(
+    prompt: str,
+    category: str,
+    system_instruction: str,
+    gpt_model: str = "gpt-5.5",
+    api_key: Optional[str] = None,
+) -> dict:
+    """Query OpenAI GPT for prompt analysis (text-only)."""
+    import os
+    from openai import OpenAI
+
+    if api_key is None:
+        api_key = os.environ.get("OPENAI_API_KEY")
+        if api_key is None:
+            raise ValueError(
+                "No API key provided. Set OPENAI_API_KEY environment variable "
+                "or pass api_key parameter."
+            )
+
+    client = OpenAI(api_key=api_key)
+    user_query = f"Category: {category}\nPrompt: \"{prompt}\""
+
+    print(f"Querying OpenAI {gpt_model}...")
+    response = client.chat.completions.create(
+        model=gpt_model,
+        messages=[
+            {"role": "system", "content": system_instruction},
+            {"role": "user", "content": user_query},
+        ],
+    )
+
+    token_usage = {'input_tokens': 0, 'output_tokens': 0}
+    if hasattr(response, 'usage') and response.usage:
+        token_usage['input_tokens'] = getattr(response.usage, 'prompt_tokens', 0) or 0
+        token_usage['output_tokens'] = getattr(response.usage, 'completion_tokens', 0) or 0
+        print(
+            f"  Token usage: {token_usage['input_tokens']:,} input, "
+            f"{token_usage['output_tokens']:,} output"
+        )
+
+    return {
+        'text': response.choices[0].message.content,
+        'token_usage': token_usage,
+    }
+
+
 def analyze_shapetalk_prompt(
     prompt: str,
     category: str,
     backend: str = "qwen",
     model_name: str = "Qwen/Qwen2.5-1.5B-Instruct",
     gemini_model: str = "gemini-2.5-flash",
+    gpt_model: str = "gpt-5.5",
     max_new_tokens: int = 1024,
     use_in_context_examples: bool = True,
 ) -> dict:
@@ -192,9 +226,10 @@ def analyze_shapetalk_prompt(
     Args:
         prompt: The ShapeTalk utterance describing target vs source differences
         category: The shape category (e.g., 'chair', 'table')
-        backend: "qwen" for local model or "gemini" for Gemini API
+        backend: "qwen", "gemini", or "gpt"
         model_name: HuggingFace model to use (for qwen backend)
         gemini_model: Gemini model to use (for gemini backend)
+        gpt_model: OpenAI model to use (for gpt backend)
         max_new_tokens: Maximum tokens to generate
         use_in_context_examples: Whether to include user-annotated examples
     
@@ -216,7 +251,8 @@ def analyze_shapetalk_prompt(
     
     # Query the appropriate backend
     token_usage = None
-    if backend.lower() == "gemini":
+    backend_lower = backend.lower()
+    if backend_lower == "gemini":
         gemini_result = _analyze_with_gemini(
             prompt=prompt,
             category=category,
@@ -225,6 +261,15 @@ def analyze_shapetalk_prompt(
         )
         response = gemini_result['text']
         token_usage = gemini_result['token_usage']
+    elif backend_lower == "gpt":
+        gpt_result = _analyze_with_gpt(
+            prompt=prompt,
+            category=category,
+            system_instruction=system_instruction,
+            gpt_model=gpt_model,
+        )
+        response = gpt_result['text']
+        token_usage = gpt_result['token_usage']
     else:
         # Local Qwen model
         model, tokenizer = load_local_model(model_name)
@@ -346,7 +391,7 @@ def get_single_shapetalk_example(category: str = "chair") -> Dict:
     Returns:
         A pandas Series (row) with the sample data
     """
-    df = pd.read_csv(SHAPETALK_CSV)
+    df = pd.read_csv(_shapetalk_csv_path())
     
     filtered = df[
         (df['source_dataset'] == 'ShapeNet') &
@@ -386,7 +431,7 @@ def test_on_shapetalk(
         List of results
     """
     print(f"Loading ShapeTalk CSV...")
-    df = pd.read_csv(SHAPETALK_CSV)
+    df = pd.read_csv(_shapetalk_csv_path())
     
     # Filter for ShapeNet dataset
     filtered = df[

@@ -15,13 +15,15 @@ from typing import Union
 import numpy as np
 import torch
 
-# Default Blender executable path. Prefer user configuration or PATH; keep the
-# lab path as a final fallback for existing internal runs.
-DEFAULT_BLENDER_PATH = (
-    os.environ.get("BLENDER_PATH")
-    or shutil.which("blender")
-    or "/nfs/usr/esella/blender-3.4.1-linux-x64/blender"
-)
+def resolve_blender_path() -> str:
+    """Resolve Blender executable from BLENDER_PATH or PATH."""
+    path = os.environ.get("BLENDER_PATH") or shutil.which("blender")
+    if not path:
+        raise RuntimeError(
+            "Blender not found. Install Blender, add it to PATH, or set BLENDER_PATH "
+            "(see README)."
+        )
+    return path
 
 # Applied in Blender when rendering Trellis decode exports (e.g. original_slat.png, output.png).
 TRELLIS_DECODE_GLB_BLENDER_ROTATION_DEG = (-90, 0, 0)
@@ -194,7 +196,7 @@ def render_obj_with_blender_sequence(
         subprocess.CompletedProcess result
     """
     if blender_path is None:
-        blender_path = DEFAULT_BLENDER_PATH
+        blender_path = resolve_blender_path()
 
     azim_degrees = [float(x) for x in azim_degrees]
     output_paths = [os.path.abspath(str(p)) for p in output_paths]
@@ -730,13 +732,13 @@ def run_boolean_cut(
         obj_a: Path to shape A OBJ file
         obj_b: Path to shape B OBJ file
         out_obj: Output path for the result OBJ
-        blender_path: Path to Blender executable (default: uses DEFAULT_BLENDER_PATH)
+        blender_path: Path to Blender executable (default: BLENDER_PATH or PATH)
     
     Returns:
         subprocess.CompletedProcess result
     """
     if blender_path is None:
-        blender_path = DEFAULT_BLENDER_PATH
+        blender_path = resolve_blender_path()
 
     out_obj = os.path.abspath(out_obj)
     out_dir = os.path.dirname(out_obj)
@@ -952,13 +954,13 @@ def run_add_shape_c(
         cut_obj: Path to the cut result OBJ file (A - B)
         obj_c: Path to shape C OBJ file
         out_obj: Output path for the result OBJ
-        blender_path: Path to Blender executable (default: uses DEFAULT_BLENDER_PATH)
+        blender_path: Path to Blender executable (default: BLENDER_PATH or PATH)
     
     Returns:
         subprocess.CompletedProcess result
     """
     if blender_path is None:
-        blender_path = DEFAULT_BLENDER_PATH
+        blender_path = resolve_blender_path()
 
     out_obj = os.path.abspath(out_obj)
     out_dir = os.path.dirname(out_obj)

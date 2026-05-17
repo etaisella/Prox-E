@@ -43,9 +43,31 @@ conda activate prox-e
 
 The setup script creates a Python 3.11 conda environment, installs PyTorch and the remaining Python dependencies, installs the two source-built rasterization packages, and downloads SuperDec checkpoints if they are missing. 
 
+### TRELLIS
+
+Download the **TRELLIS-image-large** model, and add the following entries to `TRELLIS-image-large/pipeline.json`:
+```json
+{
+    "sparse_structure_encoder": "ckpts/ss_enc_conv3d_16l8_fp16",
+    "slat_encoder": "ckpts/slat_enc_swin8_B_64l8_fp16"
+}
+```
+
+Download the **TRELLIS-text-large** model, and add the following entries to `TRELLIS-text-large/pipeline.json`:
+```json
+{
+    "sparse_structure_encoder": "path/to/TRELLIS-image-large/ckpts/ss_enc_conv3d_16l8_fp16",
+    "sparse_structure_decoder": "path/to/TRELLIS-image-large/ckpts/ss_dec_conv3d_16l8_fp16",
+    "slat_encoder": "path/to/TRELLIS-image-large/ckpts/slat_enc_swin8_B_64l8_fp16",
+    "slat_decoder_gs": "path/to/TRELLIS-image-large/ckpts/slat_dec_gs_swin8_B_64l8gs32_fp16",
+    "slat_decoder_rf": "path/to/TRELLIS-image-large/ckpts/slat_dec_rf_swin8_B_64l8r16_fp16",
+    "slat_decoder_mesh": "path/to/TRELLIS-image-large/ckpts/slat_dec_mesh_swin8_B_64l8m256c_fp16",
+}
+```
+
 ### Blender
 
-The code expects Blender for utility renders. It first uses `BLENDER_PATH`, then `blender` on `PATH`, then the internal lab path. On a fresh machine, install Blender and make sure `blender` is on `PATH`; otherwise set:
+The code expects Blender for utility renders. It uses `BLENDER_PATH` if set, otherwise `blender` on `PATH`. On a fresh machine, install Blender and make sure `blender` is on `PATH`; otherwise set:
 
 ```bash
 export BLENDER_PATH=/path/to/blender
@@ -71,6 +93,8 @@ bash scripts/download_checkpoints.sh
 cd ../../..
 ```
 
+---
+
 ## 🎮 Running the Demos
 
 We include an demo edit example for each datset used in our work:
@@ -91,7 +115,7 @@ python inference.py \
   --input_mesh demo/edit3dbench/elephant/model.glb \
   --category elephant \
   --edit_instruction "make the elephant wear a red hat" \
-  --edit3dbench
+  --orientation_index 15
 ```
 
 **Toys4K**:
@@ -103,6 +127,8 @@ python inference.py \
 ```
 
 Final results are saved in the `outputs/` folder.
+
+---
 
 ## 🛋️ Running Prox-E on custom shapes
 
@@ -132,3 +158,26 @@ python inference.py \
 ```
 
 If you change the orientation for a mesh you already processed, use a fresh `--output_folder` so cached abstractions are not reused.
+
+---
+
+## ✏️ BibTeX
+If you find our work useful in your research, please consider citing:
+
+    @misc{sella2026proxefinegrained3dshape,
+     title={Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions},
+     author={Etai Sella and Hao Phung and Nitay Amiel and Or Litany and Or Patashnik and Hadar Averbuch-Elor},
+     year={2026},
+     eprint={2604.23774},
+     archivePrefix={arXiv},
+     primaryClass={cs.GR},
+     eprint={2604.23774},
+     url={https://arxiv.org/abs/2604.23774},
+    }
+    
+</br>
+
+---
+
+## 🙏 Acknowledgements 
+This code build upon the [VoxHammer](https://github.com/Nelipot-Lee/VoxHammer), [SuperDec](https://github.com/elisabettafedele/superdec) and [TRELLIS](https://github.com/microsoft/TRELLIS) repositories, we thank their creators for their great work.

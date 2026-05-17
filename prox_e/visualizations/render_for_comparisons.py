@@ -35,10 +35,9 @@ sys.path.insert(0, str(REPO_ROOT))
 from utils import render_obj_with_blender
 from scripts.prepare_compound_edit import ORIENTATION_TRANSFORMS
 
-CSV_PATH = "/nfs/usr/esella/mys3gallery/shapetalk/language/tredit_test_set_200_each.csv"
-RESULTS_BASE = Path("/nfs/usr/esella/mys3gallery/000_tredit_redo_from_data_prep")
-BASELINES_BASE = Path("/nfs/usr/esella/mys3gallery/gallery_3dmodels")
-DEFAULT_OUTPUT = Path("/nfs/usr/esella/mys3gallery/prox_e_new_comparisons")
+def _env_path(name: str) -> str | None:
+    return os.environ.get(name)
+
 
 # Sentinel: ``gallery_baseline_orientation_chain(..., trellis_post_orient=...)`` not overridden.
 _UNSET_TRELLIS_POST = object()
@@ -447,13 +446,30 @@ def make_comparison_image(
 
 def main():
     parser = argparse.ArgumentParser(description="Render comparison images across baselines")
-    parser.add_argument("--csv", type=str, default=CSV_PATH, help="Path to test set CSV")
-    parser.add_argument("--results-base", type=str, default=str(RESULTS_BASE),
-                        help="Base path for our pipeline results")
-    parser.add_argument("--baselines-base", type=str, default=str(BASELINES_BASE),
-                        help="Base path containing baseline subfolders")
-    parser.add_argument("--output", type=str, default=str(DEFAULT_OUTPUT),
-                        help="Output directory for rendered comparisons")
+    parser.add_argument(
+        "--csv",
+        type=str,
+        default=_env_path("PROXE_COMPARISON_CSV"),
+        help="Path to test set CSV (default: PROXE_COMPARISON_CSV env)",
+    )
+    parser.add_argument(
+        "--results-base",
+        type=str,
+        default=_env_path("PROXE_RESULTS_BASE"),
+        help="Base path for pipeline results (default: PROXE_RESULTS_BASE env)",
+    )
+    parser.add_argument(
+        "--baselines-base",
+        type=str,
+        default=_env_path("PROXE_BASELINES_BASE"),
+        help="Base path for baseline subfolders (default: PROXE_BASELINES_BASE env)",
+    )
+    parser.add_argument(
+        "--output",
+        type=str,
+        default=_env_path("PROXE_COMPARISON_OUTPUT"),
+        help="Output directory for comparisons (default: PROXE_COMPARISON_OUTPUT env)",
+    )
     parser.add_argument("--skip-existing", action="store_true",
                         help="Skip rendering if the output PNG already exists")
     parser.add_argument("--limit", type=int, default=None,
@@ -518,6 +534,15 @@ def main():
              "Use -1 to force no extra step (same as setting the constant to None).",
     )
     args = parser.parse_args()
+
+    for name, value in (
+        ("--csv / PROXE_COMPARISON_CSV", args.csv),
+        ("--results-base / PROXE_RESULTS_BASE", args.results_base),
+        ("--baselines-base / PROXE_BASELINES_BASE", args.baselines_base),
+        ("--output / PROXE_COMPARISON_OUTPUT", args.output),
+    ):
+        if not value:
+            parser.error(f"{name} is required.")
 
     for bl_name, idx_str in args.baseline_orientation:
         BASELINE_ORIENTATIONS[bl_name] = int(idx_str)

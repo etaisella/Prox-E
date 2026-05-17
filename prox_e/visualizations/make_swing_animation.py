@@ -34,13 +34,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 def output_directory(path_str: str) -> Path:
-    """
-    Output root as given for absolute paths (no symlink resolution).
-
-    ``Path.resolve()`` can turn ``/nfs/.../mys3gallery/...`` into ``/s3-gallery/esella/...``;
-    the file is the same, but IDEs listing the path *you* typed may not show updates. Writing
-    under the literal ``--output`` path avoids that confusion.
-    """
+    """Output root as given for absolute paths (no symlink resolution)."""
     p = Path(path_str).expanduser()
     if not p.is_absolute():
         return (Path.cwd() / p).resolve()
