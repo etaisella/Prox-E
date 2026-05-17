@@ -18,7 +18,7 @@ Text-based 2D image editing models have recently reached an impressive level of 
 <img src="webpage_assets/images/temp_teaser.jpg">
 </p>
 
----
+<br>
 
 ## 🚀 Getting Started
 
@@ -27,7 +27,7 @@ Text-based 2D image editing models have recently reached an impressive level of 
 Clone the repo and initialize submodules if your checkout stores `prox_e/submodules` as git submodules:
 
 ```bash
-git clone <repo-url> Prox-E
+git clone https://github.com/etaisella/Prox-E.git
 cd Prox-E
 git submodule update --init --recursive
 ```
@@ -93,7 +93,7 @@ bash scripts/download_checkpoints.sh
 cd ../../..
 ```
 
----
+<br>
 
 ## 🎮 Running the Demos
 
@@ -128,7 +128,7 @@ python inference.py \
 
 Final results are saved in the `outputs/` folder.
 
----
+<br>
 
 ## 🛋️ Running Prox-E on custom shapes
 
@@ -159,7 +159,7 @@ python inference.py \
 
 If you change the orientation for a mesh you already processed, use a fresh `--output_folder` so cached abstractions are not reused.
 
----
+<br>
 
 ## ✏️ BibTeX
 If you find our work useful in your research, please consider citing:
@@ -177,7 +177,6 @@ If you find our work useful in your research, please consider citing:
     
 </br>
 
----
 
 ## 🙏 Acknowledgements 
 This code build upon the [VoxHammer](https://github.com/Nelipot-Lee/VoxHammer), [SuperDec](https://github.com/elisabettafedele/superdec) and [TRELLIS](https://github.com/microsoft/TRELLIS) repositories, we thank their creators for their great work.
