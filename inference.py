@@ -448,6 +448,9 @@ def editing_pipeline(args, sample_path: Path, sample_id: str, text_pipeline=None
         if args.vlm == "gpt":
             parse_backend = "gpt"
             parse_kwargs = {"gpt_model": args.gpt_model}
+        elif args.vlm == "qwen":
+            parse_backend = "qwen"
+            parse_kwargs = {}
         parse_result = analyze_shapetalk_prompt(
             prompt=args.edit_instruction,
             category=category,

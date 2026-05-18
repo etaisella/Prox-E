@@ -75,13 +75,26 @@ export BLENDER_PATH=/path/to/blender
 
 ### VLM Setup
 
-By default, Prox-E uses gemini as the VLM backbone in the proxy editing and prompt parsing stages. As such, it requires users have access to these models and set the google API key as such.
+By default, Prox-E uses Gemini as the VLM backbone in the proxy editing and prompt parsing stages. Set your Google API key before running the default pipeline:
 
 ```bash
 export GOOGLE_API_KEY=<your-key>
 ```
 
-Our code also supports 
+Prox-E also supports GPT as the VLM backend. To use it, set your OpenAI API key and pass `--vlm gpt`:
+
+```bash
+export OPENAI_API_KEY=<your-key>
+python inference.py ... --vlm gpt
+```
+
+Qwen is also supported for local prompt parsing and local VLM proxy editing. The VLM stage loads a local `Qwen/Qwen3-VL-<size>-Instruct` checkpoint, so no Qwen API key is required for `--vlm qwen`; choose the checkpoint size with `--qwen_model_size` if needed:
+
+```bash
+python inference.py ... --vlm qwen --qwen_model_size 4B
+```
+
+NOTE: In our testing the local Qwen models significantly underperformed in proxy editing compared to the high end GPT and Gemini models.
 
 ### Additional requirements
 
