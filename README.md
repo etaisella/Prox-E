@@ -173,7 +173,7 @@ Final results are saved in the `outputs/` folder.
 
 <br>
 
-## 🛋️ Running on custom shapes
+## 🪄 Running on custom shapes
 
 For a custom mesh, set `--input_mesh` to the mesh file, `--category` to the object class, and `--edit_instruction` to the requested edit:
 
@@ -221,7 +221,7 @@ See [`evals/README.md`](evals/README.md) for the more details.
 
 <br>
 
-## ✏️ BibTeX
+## 📝 BibTeX
 If you find our work useful in your research, please consider citing:
 
     @inproceedings{sella2026proxefinegrained3dshape,
