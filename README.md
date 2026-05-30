@@ -13,25 +13,25 @@ This is the official PyTorch implementation of **Prox-E**.
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#abstract">Abstract</a>
+      <a href="#-abstract">Abstract</a>
     </li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#-getting-started">Getting Started</a>
     </li>
     <li>
-      <a href="#running-the-demos">Running the Demos</a>
+      <a href="#-running-the-demos">Running the Demos</a>
     </li>
     <li>
-      <a href="#running-prox-e-on-custom-shapes">Running Prox-E on custom shapes</a>
+      <a href="#-running-prox-e-on-custom-shapes">Running Prox-E on custom shapes</a>
     </li>
     <li>
-      <a href="#evaluation">Evaluation</a>
+      <a href="#-evaluation">Evaluation</a>
     </li>
     <li>
-      <a href="#bibtex">BibTeX</a>
+      <a href="#-bibtex">BibTeX</a>
     </li>
     <li>
-      <a href="#acknowledgements">Acknowledgements</a>
+      <a href="#-acknowledgements">Acknowledgements</a>
     </li>
   </ol>
 </details>
