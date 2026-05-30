@@ -15,18 +15,51 @@ ORIENTATION_TRANSFORMS: dict[int, tuple[str, np.ndarray]] = {
     1: ("flip_z", np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])),
     2: ("flip_y", np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])),
     3: ("flip_x", np.array([[-1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])),
-    4: ("flip_y_and_z", np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])),
+    4: (
+        "flip_y_and_z",
+        np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]),
+    ),
     5: ("swap_y_z", np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])),
-    6: ("swap_y_z_flip_z", np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])),
-    7: ("swap_y_z_flip_y", np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]])),
-    8: ("swap_y_z_flip_both", np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, -1, 0, 0], [0, 0, 0, 1]])),
-    9: ("rot_180_x", np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])),
-    10: ("rot_180_y", np.array([[-1, 0, 0, 0], [0, 1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])),
-    11: ("rot_180_z", np.array([[-1, 0, 0, 0], [0, -1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])),
-    12: ("rot_90_x", np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])),
-    13: ("rot_-90_x", np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]])),
-    14: ("rot_90_y", np.array([[0, 0, 1, 0], [0, 1, 0, 0], [-1, 0, 0, 0], [0, 0, 0, 1]])),
-    15: ("rot_-90_y", np.array([[0, 0, -1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]])),
+    6: (
+        "swap_y_z_flip_z",
+        np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]),
+    ),
+    7: (
+        "swap_y_z_flip_y",
+        np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]]),
+    ),
+    8: (
+        "swap_y_z_flip_both",
+        np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, -1, 0, 0], [0, 0, 0, 1]]),
+    ),
+    9: (
+        "rot_180_x",
+        np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]),
+    ),
+    10: (
+        "rot_180_y",
+        np.array([[-1, 0, 0, 0], [0, 1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]),
+    ),
+    11: (
+        "rot_180_z",
+        np.array([[-1, 0, 0, 0], [0, -1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]),
+    ),
+    12: (
+        "rot_90_x",
+        np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]),
+    ),
+    13: (
+        "rot_-90_x",
+        np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]]),
+    ),
+    14: (
+        "rot_90_y",
+        np.array([[0, 0, 1, 0], [0, 1, 0, 0], [-1, 0, 0, 0], [0, 0, 0, 1]]),
+    ),
+    15: (
+        "rot_-90_y",
+        np.array([[0, 0, -1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]]),
+    ),
 }
 
 TARGET_MAX_DIM = 0.75
@@ -65,7 +98,9 @@ def apply_legacy_input_orientation(mesh: trimesh.Trimesh, *, edit3dbench: bool) 
     return label
 
 
-def apply_orientation(mesh: trimesh.Trimesh, orientation_index: int | None, *, edit3dbench: bool) -> str:
+def apply_orientation(
+    mesh: trimesh.Trimesh, orientation_index: int | None, *, edit3dbench: bool
+) -> str:
     if orientation_index is None:
         return apply_legacy_input_orientation(mesh, edit3dbench=edit3dbench)
     name, matrix = get_orientation_transform(orientation_index)
@@ -129,16 +164,24 @@ def load_oriented_normalized_mesh(
 ) -> dict[str, Any]:
     source_path = Path(source_path)
     output_path = Path(output_path)
-    metadata_path = Path(metadata_path) if metadata_path is not None else output_path.with_suffix(".orientation.json")
+    metadata_path = (
+        Path(metadata_path)
+        if metadata_path is not None
+        else output_path.with_suffix(".orientation.json")
+    )
 
     mesh = load_mesh_union(source_path)
-    orientation_label = apply_orientation(mesh, orientation_index, edit3dbench=edit3dbench)
+    orientation_label = apply_orientation(
+        mesh, orientation_index, edit3dbench=edit3dbench
+    )
     stats = normalize_mesh(mesh)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     mesh.export(str(output_path))
 
-    metadata = expected_orientation_metadata(source_path, orientation_index, edit3dbench=edit3dbench)
+    metadata = expected_orientation_metadata(
+        source_path, orientation_index, edit3dbench=edit3dbench
+    )
     metadata.update({"orientation_label": orientation_label, "normalization": stats})
     metadata_path.write_text(json.dumps(metadata, indent=2) + "\n")
     return metadata

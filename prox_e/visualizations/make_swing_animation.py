@@ -214,7 +214,9 @@ def run_opencv_video_writer(
 
     out_video = Path(out_video)
     fd, tmp_str = tempfile.mkstemp(
-        suffix=".mp4", prefix=f"swing_cv2_{os.getpid()}_{time.time_ns()}_", dir=tempfile.gettempdir()
+        suffix=".mp4",
+        prefix=f"swing_cv2_{os.getpid()}_{time.time_ns()}_",
+        dir=tempfile.gettempdir(),
     )
     os.close(fd)
     tmp_path = Path(tmp_str)
@@ -284,7 +286,9 @@ def run_ffmpeg(
         print(msg, file=sys.stderr)
         return
     fd, tmp_str = tempfile.mkstemp(
-        suffix=".mp4", prefix=f"swing_ff_{os.getpid()}_{time.time_ns()}_", dir=tempfile.gettempdir()
+        suffix=".mp4",
+        prefix=f"swing_ff_{os.getpid()}_{time.time_ns()}_",
+        dir=tempfile.gettempdir(),
     )
     os.close(fd)
     tmp_out = Path(tmp_str)
@@ -339,7 +343,13 @@ def encode_swing_video(
     encoder: 'auto' | 'cv2' | 'ffmpeg'
     """
     if encoder == "ffmpeg":
-        run_ffmpeg(frames_dir, f"{stem}_%04d.png", out_video, fps, require_ffmpeg=require_success)
+        run_ffmpeg(
+            frames_dir,
+            f"{stem}_%04d.png",
+            out_video,
+            fps,
+            require_ffmpeg=require_success,
+        )
         return
 
     if encoder == "cv2":
@@ -356,15 +366,30 @@ def encode_swing_video(
     try:
         import cv2  # noqa: F401
     except ImportError:
-        print("OpenCV not installed; falling back to ffmpeg. (pip install opencv-python-headless)", file=sys.stderr)
-        run_ffmpeg(frames_dir, f"{stem}_%04d.png", out_video, fps, require_ffmpeg=require_success)
+        print(
+            "OpenCV not installed; falling back to ffmpeg. (pip install opencv-python-headless)",
+            file=sys.stderr,
+        )
+        run_ffmpeg(
+            frames_dir,
+            f"{stem}_%04d.png",
+            out_video,
+            fps,
+            require_ffmpeg=require_success,
+        )
         return
 
     try:
         run_opencv_video_writer(frames_dir, out_video, n_frames, fps, stem=stem)
     except Exception as e:
         print(f"OpenCV encoding failed ({e}); trying ffmpeg...", file=sys.stderr)
-        run_ffmpeg(frames_dir, f"{stem}_%04d.png", out_video, fps, require_ffmpeg=require_success)
+        run_ffmpeg(
+            frames_dir,
+            f"{stem}_%04d.png",
+            out_video,
+            fps,
+            require_ffmpeg=require_success,
+        )
 
 
 def _run_blender_swing(args: argparse.Namespace) -> None:
@@ -375,7 +400,9 @@ def _run_blender_swing(args: argparse.Namespace) -> None:
     from scripts.prepare_compound_edit import ORIENTATION_TRANSFORMS
     from utils import render_obj_with_blender_sequence
 
-    def _blender_euler_xyz_deg_to_matrix_3x3(rx: float, ry: float, rz: float) -> np.ndarray:
+    def _blender_euler_xyz_deg_to_matrix_3x3(
+        rx: float, ry: float, rz: float
+    ) -> np.ndarray:
         rx, ry, rz = [math.radians(x) for x in (rx, ry, rz)]
         cx, sx = math.cos(rx), math.sin(rx)
         cy, sy = math.cos(ry), math.sin(ry)
@@ -441,7 +468,9 @@ def _run_blender_swing(args: argparse.Namespace) -> None:
     else:
         rot_kw = dict(rotation=(args.rx, args.ry, args.rz), rotation_matrix=None)
 
-    offsets = azimuth_offsets_deg_list(args.frames, args.swing, convexity=args.swing_convexity)
+    offsets = azimuth_offsets_deg_list(
+        args.frames, args.swing, convexity=args.swing_convexity
+    )
     azims = [args.azim + offsets[i] for i in range(args.frames)]
     out_pngs = [str(frames_dir / f"{stem}_{i:04d}.png") for i in range(args.frames)]
 
@@ -508,7 +537,9 @@ def _run_blender_swing(args: argparse.Namespace) -> None:
             f"Rendering {args.frames} frames in one Blender session (azim "
             f"{azims[0]:.4f}° … {azims[-1]:.4f}°)…"
         )
-        r = render_obj_with_blender_sequence(str(mesh_path), azims, out_pngs, **render_kw)
+        r = render_obj_with_blender_sequence(
+            str(mesh_path), azims, out_pngs, **render_kw
+        )
         if r.returncode != 0:
             print(r.stderr or r.stdout, file=sys.stderr)
             sys.exit(r.returncode or 1)
@@ -528,7 +559,9 @@ def _run_blender_swing(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="Swing camera animation around a mesh (Blender + OpenCV/ffmpeg).")
+    p = argparse.ArgumentParser(
+        description="Swing camera animation around a mesh (Blender + OpenCV/ffmpeg)."
+    )
     p.add_argument(
         "--mesh",
         type=str,
@@ -541,8 +574,18 @@ def main() -> None:
         required=True,
         help="Output directory (frames in frames/; video swing.mp4 at top level)",
     )
-    p.add_argument("--frames", type=int, default=DEFAULT_SWING_FRAMES, help=f"Number of frames (default: {DEFAULT_SWING_FRAMES})")
-    p.add_argument("--swing", type=float, default=15.0, help="Half-range of azimuth swing in degrees (default: 15)")
+    p.add_argument(
+        "--frames",
+        type=int,
+        default=DEFAULT_SWING_FRAMES,
+        help=f"Number of frames (default: {DEFAULT_SWING_FRAMES})",
+    )
+    p.add_argument(
+        "--swing",
+        type=float,
+        default=15.0,
+        help="Half-range of azimuth swing in degrees (default: 15)",
+    )
     p.add_argument(
         "--swing-convexity",
         type=float,
@@ -554,28 +597,68 @@ def main() -> None:
             "0→+swing→0) always use the same number of frames."
         ),
     )
-    p.add_argument("--fps", type=float, default=30.0, help="Video frame rate (default: 30)")
-    p.add_argument("--dist", type=float, default=DEFAULT_DIST, help=f"Camera distance (default: {DEFAULT_DIST})")
-    p.add_argument("--azim", type=float, default=DEFAULT_AZIM_BASE, help=f"Base azimuth ° (default: {DEFAULT_AZIM_BASE})")
-    p.add_argument("--elev", type=float, default=DEFAULT_ELEV, help=f"Elevation ° (default: {DEFAULT_ELEV})")
-    p.add_argument("--fov", type=float, default=DEFAULT_FOV, help=f"Vertical FOV ° (default: {DEFAULT_FOV})")
+    p.add_argument(
+        "--fps", type=float, default=30.0, help="Video frame rate (default: 30)"
+    )
+    p.add_argument(
+        "--dist",
+        type=float,
+        default=DEFAULT_DIST,
+        help=f"Camera distance (default: {DEFAULT_DIST})",
+    )
+    p.add_argument(
+        "--azim",
+        type=float,
+        default=DEFAULT_AZIM_BASE,
+        help=f"Base azimuth ° (default: {DEFAULT_AZIM_BASE})",
+    )
+    p.add_argument(
+        "--elev",
+        type=float,
+        default=DEFAULT_ELEV,
+        help=f"Elevation ° (default: {DEFAULT_ELEV})",
+    )
+    p.add_argument(
+        "--fov",
+        type=float,
+        default=DEFAULT_FOV,
+        help=f"Vertical FOV ° (default: {DEFAULT_FOV})",
+    )
     p.add_argument(
         "--light-energy",
         type=float,
         default=DEFAULT_LIGHT_ENERGY,
         help=f"Area light scale (default: {DEFAULT_LIGHT_ENERGY})",
     )
-    p.add_argument("--res", type=int, default=DEFAULT_RES, help=f"Square resolution (default: {DEFAULT_RES})")
+    p.add_argument(
+        "--res",
+        type=int,
+        default=DEFAULT_RES,
+        help=f"Square resolution (default: {DEFAULT_RES})",
+    )
     p.add_argument(
         "--mesh-rotation",
         choices=("teaser-pipeline", "none", "euler"),
         default="teaser-pipeline",
         help="Vertex rotation before camera: teaser pipeline GLB matrix, none, or euler (see --rx/--ry/--rz)",
     )
-    p.add_argument("--rx", type=float, default=-90.0, help="Euler X° for --mesh-rotation euler (default: -90)")
-    p.add_argument("--ry", type=float, default=0.0, help="Euler Y° for --mesh-rotation euler")
-    p.add_argument("--rz", type=float, default=0.0, help="Euler Z° for --mesh-rotation euler")
-    p.add_argument("--no-ground", action="store_true", help="Disable invisible shadow-catcher ground")
+    p.add_argument(
+        "--rx",
+        type=float,
+        default=-90.0,
+        help="Euler X° for --mesh-rotation euler (default: -90)",
+    )
+    p.add_argument(
+        "--ry", type=float, default=0.0, help="Euler Y° for --mesh-rotation euler"
+    )
+    p.add_argument(
+        "--rz", type=float, default=0.0, help="Euler Z° for --mesh-rotation euler"
+    )
+    p.add_argument(
+        "--no-ground",
+        action="store_true",
+        help="Disable invisible shadow-catcher ground",
+    )
     p.add_argument(
         "--no-gpu",
         action="store_true",
@@ -586,7 +669,11 @@ def main() -> None:
         action="store_true",
         help="Skip Blender shade_smooth on meshes (faceted / non-smoothed look).",
     )
-    p.add_argument("--skip-video", action="store_true", help="Only render PNG frames, do not call ffmpeg")
+    p.add_argument(
+        "--skip-video",
+        action="store_true",
+        help="Only render PNG frames, do not call ffmpeg",
+    )
     p.add_argument(
         "--video-only",
         action="store_true",
@@ -646,7 +733,9 @@ def main() -> None:
             except (FileNotFoundError, ValueError) as e:
                 print(e, file=sys.stderr)
                 sys.exit(1)
-            print(f"Found {n} frames under {frames_dir}; encoding at {args.fps} fps -> {video_path}")
+            print(
+                f"Found {n} frames under {frames_dir}; encoding at {args.fps} fps -> {video_path}"
+            )
             encode_swing_video(
                 frames_dir,
                 video_path,
@@ -671,7 +760,8 @@ def main() -> None:
             p.error("--num-transformation-frames must be >= 1")
         if (
             args.transform
-            and args.start_transform_frame + args.num_transformation_frames > args.frames
+            and args.start_transform_frame + args.num_transformation_frames
+            > args.frames
         ):
             p.error(
                 "start-transform-frame + num-transformation-frames cannot exceed --frames"

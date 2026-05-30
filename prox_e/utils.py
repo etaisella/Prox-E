@@ -1,6 +1,7 @@
 """
 Blender utility functions for rendering and boolean operations.
 """
+
 import fcntl
 import json
 import os
@@ -15,6 +16,7 @@ from typing import Union
 import numpy as np
 import torch
 
+
 def resolve_blender_path() -> str:
     """Resolve Blender executable from BLENDER_PATH or PATH."""
     path = os.environ.get("BLENDER_PATH") or shutil.which("blender")
@@ -24,6 +26,7 @@ def resolve_blender_path() -> str:
             "(see README)."
         )
     return path
+
 
 # Applied in Blender when rendering Trellis decode exports (e.g. original_slat.png, output.png).
 TRELLIS_DECODE_GLB_BLENDER_ROTATION_DEG = (-90, 0, 0)
@@ -47,43 +50,52 @@ def format_time(seconds: float) -> str:
 def load_parse_result(file_path: Path, category: str) -> dict:
     """
     Load structural/appearance descriptions from instruction_parse_result.txt.
-    
+
     Returns dict with 'structural_description' and 'appearance_description',
     or None if file cannot be parsed.
     """
     default = f"a {category}"
     try:
-        with open(file_path, 'r') as f:
+        with open(file_path, "r") as f:
             lines = f.readlines()
         structural = default
         appearance = default
         for line in lines:
             line = line.strip()
             if line.startswith("Structural Description:"):
-                structural = line.replace("Structural Description:", "").strip() or default
+                structural = (
+                    line.replace("Structural Description:", "").strip() or default
+                )
             elif line.startswith("Appearance Description:"):
-                appearance = line.replace("Appearance Description:", "").strip() or default
-        return {'structural_description': structural, 'appearance_description': appearance}
+                appearance = (
+                    line.replace("Appearance Description:", "").strip() or default
+                )
+        return {
+            "structural_description": structural,
+            "appearance_description": appearance,
+        }
     except Exception:
         return None
 
 
-def transform_voxels_to_trellis(voxels: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
+def transform_voxels_to_trellis(
+    voxels: Union[np.ndarray, torch.Tensor],
+) -> Union[np.ndarray, torch.Tensor]:
     """
     Transform voxels to Trellis coordinate orientation.
-    
+
     The Trellis model expects coordinates in [x, z, y_inverted] format where:
     - y and z axes are swapped
     - the new y axis is inverted
-    
+
     For a 3D grid, this means:
     - Swap axes 1 and 2 (y and z)
     - Flip along axis 1 (the new y axis)
-    
+
     Args:
         voxels: Either numpy array of shape (res, res, res) or (1, 1, res, res, res),
                 or torch tensor of shape (1, 1, res, res, res)
-    
+
     Returns:
         Transformed voxels in the same format as input
     """
@@ -119,25 +131,25 @@ def transform_voxels_to_trellis(voxels: Union[np.ndarray, torch.Tensor]) -> Unio
 
 
 def render_obj_with_blender(
-        obj_path,
-        output_path,
-        res_x=512,
-        res_y=512,
-        dist=1.5,
-        azim=70.0,
-        elev=20.0,
-        fov=45.0,
-        light_energy=3,
-        transparent=True,
-        blender_path=None,
-        rotation=None,
-        rotation_matrix=None,
-        force_glb_vertex_color=False,
-        invisible_ground=False,
-        use_sun_light=True,
-        shade_smooth=True,
-        cycles_gpu: bool = True,
-    ):
+    obj_path,
+    output_path,
+    res_x=512,
+    res_y=512,
+    dist=1.5,
+    azim=70.0,
+    elev=20.0,
+    fov=45.0,
+    light_energy=3,
+    transparent=True,
+    blender_path=None,
+    rotation=None,
+    rotation_matrix=None,
+    force_glb_vertex_color=False,
+    invisible_ground=False,
+    shade_smooth=True,
+    render_norm=False,
+    cycles_gpu: bool = True,
+):
     """Render a single PNG; delegates to :func:`render_obj_with_blender_sequence`."""
     return render_obj_with_blender_sequence(
         obj_path,
@@ -155,32 +167,32 @@ def render_obj_with_blender(
         rotation_matrix=rotation_matrix,
         force_glb_vertex_color=force_glb_vertex_color,
         invisible_ground=invisible_ground,
-        use_sun_light=use_sun_light,
         shade_smooth=shade_smooth,
+        render_norm=render_norm,
         cycles_gpu=cycles_gpu,
     )
 
 
 def render_obj_with_blender_sequence(
-        obj_path,
-        azim_degrees,
-        output_paths,
-        res_x=512,
-        res_y=512,
-        dist=1.5,
-        elev=20.0,
-        fov=45.0,
-        light_energy=3,
-        transparent=True,
-        blender_path=None,
-        rotation=None,
-        rotation_matrix=None,
-        force_glb_vertex_color=False,
-        invisible_ground=False,
-        use_sun_light=True,
-        shade_smooth=True,
-        cycles_gpu: bool = True,
-    ):
+    obj_path,
+    azim_degrees,
+    output_paths,
+    res_x=512,
+    res_y=512,
+    dist=1.5,
+    elev=20.0,
+    fov=45.0,
+    light_energy=3,
+    transparent=True,
+    blender_path=None,
+    rotation=None,
+    rotation_matrix=None,
+    force_glb_vertex_color=False,
+    invisible_ground=False,
+    shade_smooth=True,
+    render_norm=False,
+    cycles_gpu: bool = True,
+):
     """
     Render one or more PNGs in a **single** Blender process: import mesh and build the scene
     once, then change camera azimuth and filepath per frame. Pixel output matches calling
@@ -450,15 +462,18 @@ def render_obj_with_blender_sequence(
                 max_coord.z = max(max_coord.z, world_co.z)
         
         center = (min_coord + max_coord) / 2
+        dims = max_coord - min_coord
+        max_dim = max(dims.x, dims.y, dims.z)
+        scale_factor = (0.75 / max_dim) if ({render_norm} and max_dim > 0) else 1.0
         
-        # Translate vertices to center at origin
+        # Translate vertices to center at origin, optionally normalizing bbox scale.
         import bmesh
         for obj in mesh_objects:
             mesh = obj.data
             bm = bmesh.new()
             bm.from_mesh(mesh)
             for vert in bm.verts:
-                vert.co = vert.co - center
+                vert.co = (vert.co - center) * scale_factor
             bm.to_mesh(mesh)
             bm.free()
             mesh.update()
@@ -643,7 +658,7 @@ def render_obj_with_blender_sequence(
         output.location = (300, 0)
         
         # For transparent background with shadows
-        if {'True' if transparent else 'False'}:
+        if {"True" if transparent else "False"}:
             # Mix shader to blend transparent and diffuse for lighter shadows
             mix = ground_nodes.new('ShaderNodeMixShader')
             mix.location = (100, 0)
@@ -683,7 +698,7 @@ def render_obj_with_blender_sequence(
     scene.render.image_settings.color_mode = 'RGBA'
 
     # Transparent background
-    scene.render.film_transparent = {'True' if transparent else 'False'}
+    scene.render.film_transparent = {"True" if transparent else "False"}
 
     for _fi in range(len(_azims)):
         _apply_azimuth_deg(_azims[_fi])
@@ -698,11 +713,7 @@ def render_obj_with_blender_sequence(
         temp_script_path = tf.name
 
     # Execute Blender in background
-    cmd = [
-        blender_path,
-        "--background",
-        "--python", temp_script_path
-    ]
+    cmd = [blender_path, "--background", "--python", temp_script_path]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
 
@@ -727,13 +738,13 @@ def run_boolean_cut(
 ):
     """
     Call Blender in background to compute A - B and export result to out_obj.
-    
+
     Args:
         obj_a: Path to shape A OBJ file
         obj_b: Path to shape B OBJ file
         out_obj: Output path for the result OBJ
         blender_path: Path to Blender executable (default: BLENDER_PATH or PATH)
-    
+
     Returns:
         subprocess.CompletedProcess result
     """
@@ -927,7 +938,8 @@ def run_boolean_cut(
     cmd = [
         blender_path,
         "--background",
-        "--python", temp_script_path,
+        "--python",
+        temp_script_path,
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -949,13 +961,13 @@ def run_add_shape_c(
     """
     Call Blender in background to take CUT = (A - B),
     add shape C (bright green) via boolean UNION, and export result to out_obj.
-    
+
     Args:
         cut_obj: Path to the cut result OBJ file (A - B)
         obj_c: Path to shape C OBJ file
         out_obj: Output path for the result OBJ
         blender_path: Path to Blender executable (default: BLENDER_PATH or PATH)
-    
+
     Returns:
         subprocess.CompletedProcess result
     """
@@ -1199,7 +1211,8 @@ def run_add_shape_c(
     cmd = [
         blender_path,
         "--background",
-        "--python", temp_script_path,
+        "--python",
+        temp_script_path,
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -1212,12 +1225,18 @@ def run_add_shape_c(
     return result
 
 
-def generate_summary(output_folder: Path, voxel_dist: float = 1.8,
-                     args=None, timings: dict = None, vlm_iterations: int = 0,
-                     vlm_token_usage: dict = None, instruction_parse_data: dict = None):
+def generate_summary(
+    output_folder: Path,
+    voxel_dist: float = 1.8,
+    args=None,
+    timings: dict = None,
+    vlm_iterations: int = 0,
+    vlm_token_usage: dict = None,
+    instruction_parse_data: dict = None,
+):
     """
     Generate a summary image and text file showing the full pipeline results.
-    
+
     Args:
         output_folder: Path to the sample output folder
         voxel_dist: Camera distance for voxel renders (default: 1.8)
@@ -1245,163 +1264,193 @@ def generate_summary(output_folder: Path, voxel_dist: float = 1.8,
             "matplotlib is required for generate_summary(), but it failed to import. "
             "If you only need Blender renders / VLM slide renders, avoid calling generate_summary()."
         ) from e
-    
+
     # Use original edit instruction from args (not the parsed/structural version)
-    if args is not None and hasattr(args, 'edit_instruction'):
+    if args is not None and hasattr(args, "edit_instruction"):
         edit_instruction = args.edit_instruction
-    elif (output_folder / 'edit_instruction.txt').exists():
-        with open(output_folder / 'edit_instruction.txt', 'r') as f:
+    elif (output_folder / "edit_instruction.txt").exists():
+        with open(output_folder / "edit_instruction.txt", "r") as f:
             edit_instruction = f.read().strip()
     else:
         print("Warning: No edit instruction found, skipping summary generation")
         return
-    
+
     # Re-render assets with consistent settings
-    inversion_folder = output_folder / 'inversion'
-    
+    inversion_folder = output_folder / "inversion"
+
     # Rotation to align Trellis-oriented outputs with standard view
     trellis_rotation = (-90, 0, 0)
-    
+
     # Re-render original_slat and final output from GLB for consistent rendering
-    original_slat_glb = output_folder / 'original_slat.glb'
-    original_slat_png = output_folder / 'original_slat.png'
+    original_slat_glb = output_folder / "original_slat.glb"
+    original_slat_png = output_folder / "original_slat.png"
     if original_slat_glb.exists():
-        render_obj_with_blender(str(original_slat_glb), str(original_slat_png), rotation=trellis_rotation)
-    
-    output_glb = output_folder / 'output.glb'
-    output_png = output_folder / 'output.png'
+        render_obj_with_blender(
+            str(original_slat_glb), str(original_slat_png), rotation=trellis_rotation
+        )
+
+    output_glb = output_folder / "output.glb"
+    output_png = output_folder / "output.png"
     if output_glb.exists():
-        render_obj_with_blender(str(output_glb), str(output_png), rotation=trellis_rotation)
-    
+        render_obj_with_blender(
+            str(output_glb), str(output_png), rotation=trellis_rotation
+        )
+
     # Re-render abstraction images for consistent camera/lighting with SLAT outputs
     # Abstractions are in original mesh space (not Trellis space), so no rotation needed
-    superdec_obj = output_folder / 'superdec.obj'
-    original_abstraction_png = output_folder / 'original_abstraction.png'
+    superdec_obj = output_folder / "superdec.obj"
+    original_abstraction_png = output_folder / "original_abstraction.png"
     if superdec_obj.exists():
         render_obj_with_blender(str(superdec_obj), str(original_abstraction_png))
-    
-    edited_final_obj = output_folder / 'edited_final.obj'
-    edited_final_render_png = output_folder / 'edited_final_render.png'
+
+    edited_final_obj = output_folder / "edited_final.obj"
+    edited_final_render_png = output_folder / "edited_final_render.png"
     if edited_final_obj.exists():
         render_obj_with_blender(str(edited_final_obj), str(edited_final_render_png))
-    
+
     # Render original voxels if PLY exists and PNG doesn't
-    original_voxels_ply = inversion_folder / 'original_shape_original_voxels.ply'
-    original_voxels_png = output_folder / 'original_voxels.png'
+    original_voxels_ply = inversion_folder / "original_shape_original_voxels.ply"
+    original_voxels_png = output_folder / "original_voxels.png"
     if original_voxels_ply.exists() and not original_voxels_png.exists():
-        render_obj_with_blender(str(original_voxels_ply), str(original_voxels_png), rotation=trellis_rotation)
-    
+        render_obj_with_blender(
+            str(original_voxels_ply),
+            str(original_voxels_png),
+            rotation=trellis_rotation,
+        )
+
     # Render inpainted voxels if PLY exists and PNG doesn't
-    inpainted_voxels_ply = output_folder / 'inpainted_voxels.ply'
-    inpainted_voxels_png = output_folder / 'inpainted_voxels.png'
+    inpainted_voxels_ply = output_folder / "inpainted_voxels.ply"
+    inpainted_voxels_png = output_folder / "inpainted_voxels.png"
     if inpainted_voxels_ply.exists() and not inpainted_voxels_png.exists():
-        render_obj_with_blender(str(inpainted_voxels_ply), str(inpainted_voxels_png), rotation=trellis_rotation)
-    
+        render_obj_with_blender(
+            str(inpainted_voxels_ply),
+            str(inpainted_voxels_png),
+            rotation=trellis_rotation,
+        )
+
     # Build list of images and titles based on what exists
     # Use original_slat.png for original and output.png for final output
     images = []
     titles = []
-    
+
     candidates = [
-        ('original_slat.png', 'Original'),
-        ('original_abstraction.png', 'Abstraction'),
-        ('edited_final_render.png', 'Edited Abstraction'),
-        ('original_voxels.png', 'Original Voxels'),
-        ('inpainted_voxels.png', 'Generated Voxels'),
-        ('output.png', 'Output'),
+        ("original_slat.png", "Original"),
+        ("original_abstraction.png", "Abstraction"),
+        ("edited_final_render.png", "Edited Abstraction"),
+        ("original_voxels.png", "Original Voxels"),
+        ("inpainted_voxels.png", "Generated Voxels"),
+        ("output.png", "Output"),
     ]
-    
+
     for img_name, title in candidates:
         if (output_folder / img_name).exists():
             images.append(img_name)
             titles.append(title)
-    
+
     if len(images) < 2:
         print("Warning: Not enough images found for summary")
         return
-    
+
     # Extract ShapeNet ID from folder name (e.g., "6a5be179ac61ab24b07017f7091028ed_shapetalk" -> "6a5be179ac61ab24b07017f7091028ed")
-    shapenet_id = output_folder.name.split('_')[0]
+    shapenet_id = output_folder.name.split("_")[0]
     title = f"{shapenet_id}: {edit_instruction}"
-    
+
     # Create figure
     n_images = len(images)
     fig, axes = plt.subplots(1, n_images, figsize=(3 * n_images, 3.5))
     if n_images == 1:
         axes = [axes]
-    fig.suptitle(title, fontsize=14, fontweight='bold', y=1.02)
-    
+    fig.suptitle(title, fontsize=14, fontweight="bold", y=1.02)
+
     for ax, img_name, title in zip(axes, images, titles):
         img = mpimg.imread(output_folder / img_name)
         ax.imshow(img)
         ax.set_title(title, fontsize=11)
-        ax.axis('off')
-    
+        ax.axis("off")
+
     plt.subplots_adjust(wspace=0.02, left=0.01, right=0.99)
-    summary_path = output_folder / 'output_summary.png'
-    plt.savefig(summary_path, dpi=150, bbox_inches='tight')
+    summary_path = output_folder / "output_summary.png"
+    plt.savefig(summary_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved image summary: {summary_path}")
-    
+
     # Generate text summary
-    text_summary_path = output_folder / 'run_summary.txt'
-    with open(text_summary_path, 'w') as f:
+    text_summary_path = output_folder / "run_summary.txt"
+    with open(text_summary_path, "w") as f:
         f.write("=" * 60 + "\n")
         f.write("TREDIT RUN SUMMARY\n")
         f.write("=" * 60 + "\n\n")
-        
+
         f.write(f"Edit Instruction: {edit_instruction}\n\n")
-        
+
         # Instruction Parse Results
         if instruction_parse_data is not None:
             f.write("--- Instruction Parsing ---\n")
-            f.write(f"  Structural Description: {instruction_parse_data.get('structural_description', 'N/A')}\n")
-            f.write(f"  Appearance Description: {instruction_parse_data.get('appearance_description', 'N/A')}\n")
-            token_usage = instruction_parse_data.get('token_usage')
+            f.write(
+                f"  Structural Description: {instruction_parse_data.get('structural_description', 'N/A')}\n"
+            )
+            f.write(
+                f"  Appearance Description: {instruction_parse_data.get('appearance_description', 'N/A')}\n"
+            )
+            token_usage = instruction_parse_data.get("token_usage")
             if token_usage:
-                f.write(f"  Token Usage: {token_usage.get('input_tokens', 0):,} input, {token_usage.get('output_tokens', 0):,} output\n")
+                f.write(
+                    f"  Token Usage: {token_usage.get('input_tokens', 0):,} input, {token_usage.get('output_tokens', 0):,} output\n"
+                )
             f.write("\n")
-        
+
         # Arguments
         if args is not None:
             f.write("--- Arguments ---\n")
             for key, value in vars(args).items():
                 f.write(f"  {key}: {value}\n")
             f.write("\n")
-        
+
         # VLM iterations
         if vlm_iterations > 0:
             f.write(f"VLM Editing Iterations: {vlm_iterations}\n\n")
-        
+
         # VLM Token Usage
         if vlm_token_usage is not None:
             f.write("--- VLM Token Usage ---\n")
-            f.write(f"  Total Input Tokens:  {vlm_token_usage.get('total_input_tokens', 0):,}\n")
-            f.write(f"  Total Output Tokens: {vlm_token_usage.get('total_output_tokens', 0):,}\n")
-            cached_tokens = vlm_token_usage.get('total_cached_tokens', 0)
+            f.write(
+                f"  Total Input Tokens:  {vlm_token_usage.get('total_input_tokens', 0):,}\n"
+            )
+            f.write(
+                f"  Total Output Tokens: {vlm_token_usage.get('total_output_tokens', 0):,}\n"
+            )
+            cached_tokens = vlm_token_usage.get("total_cached_tokens", 0)
             if cached_tokens > 0:
                 f.write(f"  Cached Tokens:       {cached_tokens:,} (reduced cost)\n")
-            f.write(f"  Total Tokens:        {vlm_token_usage.get('total_tokens', 0):,}\n")
-            
+            f.write(
+                f"  Total Tokens:        {vlm_token_usage.get('total_tokens', 0):,}\n"
+            )
+
             # Per-call breakdown
-            log = vlm_token_usage.get('log', [])
+            log = vlm_token_usage.get("log", [])
             if log:
                 f.write("\n  Per-call breakdown:\n")
                 for entry in log:
-                    cached_str = f", {entry.get('cached_tokens', 0):,} cached" if entry.get('cached_tokens', 0) > 0 else ""
-                    f.write(f"    Iteration {entry['iteration']} ({entry['type']}): "
-                            f"{entry['input_tokens']:,} input, {entry['output_tokens']:,} output{cached_str}\n")
+                    cached_str = (
+                        f", {entry.get('cached_tokens', 0):,} cached"
+                        if entry.get("cached_tokens", 0) > 0
+                        else ""
+                    )
+                    f.write(
+                        f"    Iteration {entry['iteration']} ({entry['type']}): "
+                        f"{entry['input_tokens']:,} input, {entry['output_tokens']:,} output{cached_str}\n"
+                    )
             f.write("\n")
-        
+
         # Timings
         if timings is not None:
             f.write("--- Timing ---\n")
             for step_name, step_time in timings.items():
                 if step_time is not None:
                     f.write(f"  {step_name}: {format_time(step_time)}\n")
-        
+
         f.write("\n" + "=" * 60 + "\n")
-    
+
     print(f"Saved text summary: {text_summary_path}")
 
 
@@ -1410,7 +1459,9 @@ def generate_summary(output_folder: Path, voxel_dist: float = 1.8,
 # -----------------------------------------------------------------------------
 
 
-def copy_results_to_bucket(sample_output_folder: Path, s3bucket_path: str, category: str, sample_id: str):
+def copy_results_to_bucket(
+    sample_output_folder: Path, s3bucket_path: str, category: str, sample_id: str
+):
     """
     Copy results to S3 bucket and cleanup output folder.
 
@@ -1423,9 +1474,9 @@ def copy_results_to_bucket(sample_output_folder: Path, s3bucket_path: str, categ
         category: Category name (e.g., 'chair')
         sample_id: Sample identifier (e.g., assignment_id)
     """
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("COPYING TO S3 BUCKET AND CLEANUP")
-    print("="*80)
+    print("=" * 80)
 
     s3_subfolder = Path(s3bucket_path) / category / sample_id
     s3_subfolder.mkdir(parents=True, exist_ok=True)
@@ -1434,12 +1485,12 @@ def copy_results_to_bucket(sample_output_folder: Path, s3bucket_path: str, categ
     # For inversion subfolder, only copy .ply and .pt files
     copied_count = 0
     inversion_folder = sample_output_folder / "inversion"
-    for item in sample_output_folder.rglob('*'):
+    for item in sample_output_folder.rglob("*"):
         if not item.is_file():
             continue
         # For files in inversion subfolder, only copy .ply and .pt files
         if inversion_folder.exists() and inversion_folder in item.parents:
-            if item.suffix not in ('.ply', '.pt'):
+            if item.suffix not in (".ply", ".pt"):
                 continue
         # Compute relative path within sample_output_folder
         rel_path = item.relative_to(sample_output_folder)
@@ -1451,13 +1502,13 @@ def copy_results_to_bucket(sample_output_folder: Path, s3bucket_path: str, categ
 
     # Delete everything except output_summary.png from output folder
     deleted_count = 0
-    for item in list(sample_output_folder.rglob('*')):
-        if item.is_file() and item.name != 'output_summary.png':
+    for item in list(sample_output_folder.rglob("*")):
+        if item.is_file() and item.name != "output_summary.png":
             item.unlink()
             deleted_count += 1
 
     # Remove empty directories
-    for item in sorted(sample_output_folder.rglob('*'), reverse=True):
+    for item in sorted(sample_output_folder.rglob("*"), reverse=True):
         if item.is_dir():
             try:
                 item.rmdir()  # Only removes if empty
@@ -1471,7 +1522,7 @@ def try_lock(lock_path: Path):
     """Try to acquire a non-blocking lock. Returns lock file handle or None."""
     lock_path.parent.mkdir(parents=True, exist_ok=True)
     try:
-        f = open(lock_path, 'w')
+        f = open(lock_path, "w")
         fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         return f
     except (IOError, OSError):
@@ -1517,12 +1568,12 @@ def increment_progress_count(progress_file: Path) -> int:
         count += 1
 
         # Write new count
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as tmp:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as tmp:
             tmp.write(str(count))
             tmp_path = tmp.name
-        with open(tmp_path, 'rb') as src:
+        with open(tmp_path, "rb") as src:
             data = src.read()
-        with open(progress_file, 'wb') as dst:
+        with open(progress_file, "wb") as dst:
             dst.write(data)
         os.remove(tmp_path)
         return count
@@ -1531,6 +1582,7 @@ def increment_progress_count(progress_file: Path) -> int:
         return -1
     finally:
         unlock(lock)
+
 
 def count_completed_samples(output_folder: Path) -> int:
     """
@@ -1543,7 +1595,7 @@ def count_completed_samples(output_folder: Path) -> int:
         return 0
 
     # Count all output_summary.png files in the output folder
-    for summary_file in output_folder.rglob('output_summary.png'):
+    for summary_file in output_folder.rglob("output_summary.png"):
         count += 1
 
     return count
@@ -1628,7 +1680,7 @@ def copy_slat_latents(source_folder: Path, dest_folder: Path):
                 shutil.copytree(source_renders, dest_renders)
             except shutil.Error:
                 pass  # Ignore permission errors on NFS
-            print(f"  Copied: original_shape_renders/")
+            print("  Copied: original_shape_renders/")
 
     # Copy from_shapenet if it exists
     source_shapenet = source_folder / "from_shapenet"
@@ -1638,6 +1690,6 @@ def copy_slat_latents(source_folder: Path, dest_folder: Path):
             shutil.copytree(source_shapenet, dest_shapenet)
         except shutil.Error:
             pass  # Ignore permission errors on NFS
-        print(f"  Copied: from_shapenet/")
+        print("  Copied: from_shapenet/")
 
     return copied > 0

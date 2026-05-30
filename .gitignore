@@ -3,3 +3,7 @@ outputs/
 
 # Cloned third-party trees (see README for submodule / checkout steps)
 prox_e/submodules/
+
+# Evaluation artifacts and downloaded checkpoints
+evals/checkpoints/
+evals/outputs/

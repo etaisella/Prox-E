@@ -35,6 +35,7 @@ sys.path.insert(0, str(REPO_ROOT))
 from utils import render_obj_with_blender
 from scripts.prepare_compound_edit import ORIENTATION_TRANSFORMS
 
+
 def _env_path(name: str) -> str | None:
     return os.environ.get(name)
 
@@ -43,7 +44,9 @@ def _env_path(name: str) -> str | None:
 _UNSET_TRELLIS_POST = object()
 
 GLB_ROTATION = (-90, 0, 0)
-RENDER_KWARGS = dict(rotation=GLB_ROTATION, invisible_ground=True, dist=2.0, light_energy=2.5)
+RENDER_KWARGS = dict(
+    rotation=GLB_ROTATION, invisible_ground=True, dist=2.0, light_energy=2.5
+)
 
 # Pipeline meshes (original_slat.glb, appearance_edited.glb): index into ORIENTATION_TRANSFORMS
 # applied before render / GLB export (same as sweep ``*_orient_{idx:02d}_*``).
@@ -134,7 +137,8 @@ def discover_baselines(baselines_base: Path) -> list:
     if not baselines_base.is_dir():
         return []
     return sorted(
-        d.name for d in baselines_base.iterdir()
+        d.name
+        for d in baselines_base.iterdir()
         if d.is_dir() and not d.name.startswith(".")
     )
 
@@ -182,7 +186,9 @@ def _blender_euler_xyz_deg_to_matrix_4(rx: float, ry: float, rz: float) -> np.nd
     return out
 
 
-def _apply_orientation_chain_to_mesh(mesh: trimesh.Trimesh, orientation_indices: Sequence[int]) -> None:
+def _apply_orientation_chain_to_mesh(
+    mesh: trimesh.Trimesh, orientation_indices: Sequence[int]
+) -> None:
     for idx in orientation_indices:
         _, mat = ORIENTATION_TRANSFORMS[idx]
         mesh.apply_transform(mat)
@@ -216,9 +222,12 @@ def export_comparison_glb(
     return output_glb.exists()
 
 
-def _apply_pretransform(mesh_path: Path, tmp_dir: Path,
-                        transform_matrix: np.ndarray = None,
-                        scale: float = None) -> Path:
+def _apply_pretransform(
+    mesh_path: Path,
+    tmp_dir: Path,
+    transform_matrix: np.ndarray = None,
+    scale: float = None,
+) -> Path:
     """Apply a single 4x4 transform and/or uniform scale to a mesh. Returns a temp file path."""
     mesh = trimesh.load(str(mesh_path), force="mesh")
     if isinstance(mesh, trimesh.Scene):
@@ -237,7 +246,8 @@ def _apply_pretransform(mesh_path: Path, tmp_dir: Path,
 
 
 def _apply_pretransform_orientation_chain(
-    mesh_path: Path, tmp_dir: Path,
+    mesh_path: Path,
+    tmp_dir: Path,
     orientation_indices: Sequence[int],
     scale: float = None,
 ) -> Path:
@@ -281,13 +291,17 @@ def render_single(
     if needs_pretransform:
         if orientation_indices:
             actual_path = _apply_pretransform_orientation_chain(
-                mesh_path, output_png.parent / "_tmp",
-                orientation_indices=orientation_indices, scale=scale,
+                mesh_path,
+                output_png.parent / "_tmp",
+                orientation_indices=orientation_indices,
+                scale=scale,
             )
         else:
             actual_path = _apply_pretransform(
-                mesh_path, output_png.parent / "_tmp",
-                transform_matrix=None, scale=scale,
+                mesh_path,
+                output_png.parent / "_tmp",
+                transform_matrix=None,
+                scale=scale,
             )
 
     render_obj_with_blender(str(actual_path), str(output_png), **RENDER_KWARGS)
@@ -429,7 +443,10 @@ def make_comparison_image(
         axes = [axes]
 
     max_chars_per_line = 60
-    title_lines = [utterance[i:i + max_chars_per_line] for i in range(0, len(utterance), max_chars_per_line)]
+    title_lines = [
+        utterance[i : i + max_chars_per_line]
+        for i in range(0, len(utterance), max_chars_per_line)
+    ]
     fig.suptitle("\n".join(title_lines), fontsize=12, fontweight="bold", y=0.98)
 
     for ax, label in zip(axes, ordered_labels):
@@ -445,7 +462,9 @@ def make_comparison_image(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Render comparison images across baselines")
+    parser = argparse.ArgumentParser(
+        description="Render comparison images across baselines"
+    )
     parser.add_argument(
         "--csv",
         type=str,
@@ -470,22 +489,34 @@ def main():
         default=_env_path("PROXE_COMPARISON_OUTPUT"),
         help="Output directory for comparisons (default: PROXE_COMPARISON_OUTPUT env)",
     )
-    parser.add_argument("--skip-existing", action="store_true",
-                        help="Skip rendering if the output PNG already exists")
-    parser.add_argument("--limit", type=int, default=None,
-                        help="Process only the first N rows (for debugging)")
-    parser.add_argument("--orientation-sweep", type=str, default=None, metavar="BASELINE",
-                        help="Export 16 oriented GLBs for the first CSV row that has a mesh "
-                             "under BASELINE/ (e.g. VoxHammer) and exit. Combine with --limit 1.")
+    parser.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="Skip rendering if the output PNG already exists",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Process only the first N rows (for debugging)",
+    )
+    parser.add_argument(
+        "--orientation-sweep",
+        type=str,
+        default=None,
+        metavar="BASELINE",
+        help="Export 16 oriented GLBs for the first CSV row that has a mesh "
+        "under BASELINE/ (e.g. VoxHammer) and exit. Combine with --limit 1.",
+    )
     parser.add_argument(
         "--orientation-sweep-assignment",
         type=str,
         default=None,
         metavar="ASSIGNMENT_ID",
         help="With --orientation-sweep BASELINE: sweep this assignment only. Writes 16 GLBs "
-             "under --output/<ASSIGNMENT_ID>/orientation_sweep/ using post-pipeline composition "
-             "(PIPELINE_ORIENTATION then each candidate index; see "
-             "export_orientation_sweep_glbs_post_pipeline).",
+        "under --output/<ASSIGNMENT_ID>/orientation_sweep/ using post-pipeline composition "
+        "(PIPELINE_ORIENTATION then each candidate index; see "
+        "export_orientation_sweep_glbs_post_pipeline).",
     )
     parser.add_argument(
         "--orientation-sweep-original",
@@ -493,8 +524,8 @@ def main():
         default=None,
         metavar="ASSIGNMENT_ID",
         help="Export 16 oriented GLBs from pipeline original_slat.glb for this assignment "
-             "(looks up category from --csv). Writes under --output/<id>/orientation_sweep/ "
-             "and exits. Incompatible with --orientation-sweep.",
+        "(looks up category from --csv). Writes under --output/<id>/orientation_sweep/ "
+        "and exits. Incompatible with --orientation-sweep.",
     )
     parser.add_argument(
         "--orientation-sweep-original-mesh",
@@ -502,27 +533,42 @@ def main():
         default=None,
         metavar="ASSIGNMENT_ID",
         help="Export 16 oriented GLBs from the dataset input mesh (input_mesh/normalized.obj "
-             "or from_shapenet fallback) for this assignment. Writes "
-             "original_mesh_orient_* under --output/<id>/orientation_sweep/ and exits. "
-             "Same per-index convention as --orientation-sweep-original (single "
-             "ORIENTATION_TRANSFORMS index + baked GLB_ROTATION per file).",
+        "or from_shapenet fallback) for this assignment. Writes "
+        "original_mesh_orient_* under --output/<id>/orientation_sweep/ and exits. "
+        "Same per-index convention as --orientation-sweep-original (single "
+        "ORIENTATION_TRANSFORMS index + baked GLB_ROTATION per file).",
     )
-    parser.add_argument("--baseline-orientation", type=str, nargs=2, action="append",
-                        default=[], metavar=("BASELINE", "IDX"),
-                        help="Set orientation for a baseline, e.g. --baseline-orientation VoxHammer 6. "
-                             "Can be specified multiple times.")
-    parser.add_argument("--export-glb", action="store_true",
-                        help="Also write oriented GLBs beside each PNG (original.glb, ours.glb, "
-                             "<Baseline>.glb), plus original_mesh.glb (input mesh; "
-                             "ORIGINAL_MESH_ORIENTATION + GLB_ROTATION).")
-    parser.add_argument("--assignment-ids", type=str, nargs="+", default=None, metavar="ID",
-                        help="Process only these assignmentid values (must appear in the CSV).")
+    parser.add_argument(
+        "--baseline-orientation",
+        type=str,
+        nargs=2,
+        action="append",
+        default=[],
+        metavar=("BASELINE", "IDX"),
+        help="Set orientation for a baseline, e.g. --baseline-orientation VoxHammer 6. "
+        "Can be specified multiple times.",
+    )
+    parser.add_argument(
+        "--export-glb",
+        action="store_true",
+        help="Also write oriented GLBs beside each PNG (original.glb, ours.glb, "
+        "<Baseline>.glb), plus original_mesh.glb (input mesh; "
+        "ORIGINAL_MESH_ORIENTATION + GLB_ROTATION).",
+    )
+    parser.add_argument(
+        "--assignment-ids",
+        type=str,
+        nargs="+",
+        default=None,
+        metavar="ID",
+        help="Process only these assignmentid values (must appear in the CSV).",
+    )
     parser.add_argument(
         "--baselines-pipeline-orient-only",
         action="store_true",
         help="For gallery baselines, apply only PIPELINE_ORIENTATION (ignore "
-             "BASELINE_ORIENTATIONS). Useful if legacy per-baseline indices no longer "
-             "compose correctly with the Trellis frame fix.",
+        "BASELINE_ORIENTATIONS). Useful if legacy per-baseline indices no longer "
+        "compose correctly with the Trellis frame fix.",
     )
     parser.add_argument(
         "--trellis-gallery-post-orient",
@@ -530,8 +576,8 @@ def main():
         default=None,
         metavar="IDX",
         help="Override TRELLIS_GALLERY_EXTRA_ORIENTATION: ORIENTATION_TRANSFORMS index "
-             "applied after PIPELINE_ORIENTATION for the TRELLIS gallery folder only. "
-             "Use -1 to force no extra step (same as setting the constant to None).",
+        "applied after PIPELINE_ORIENTATION for the TRELLIS gallery folder only. "
+        "Use -1 to force no extra step (same as setting the constant to None).",
     )
     args = parser.parse_args()
 
@@ -555,11 +601,17 @@ def main():
         trellis_post_kw = args.trellis_gallery_post_orient
 
     if args.orientation_sweep and args.orientation_sweep_original:
-        parser.error("Use only one of --orientation-sweep and --orientation-sweep-original.")
+        parser.error(
+            "Use only one of --orientation-sweep and --orientation-sweep-original."
+        )
     if args.orientation_sweep_original and args.orientation_sweep_assignment:
-        parser.error("Use only one of --orientation-sweep-original and --orientation-sweep-assignment.")
+        parser.error(
+            "Use only one of --orientation-sweep-original and --orientation-sweep-assignment."
+        )
     if args.orientation_sweep_assignment and not args.orientation_sweep:
-        parser.error("--orientation-sweep-assignment requires --orientation-sweep BASELINE.")
+        parser.error(
+            "--orientation-sweep-assignment requires --orientation-sweep BASELINE."
+        )
     _sweep_modes = sum(
         1
         for x in (
@@ -585,7 +637,9 @@ def main():
         df = df[df["assignmentid"].isin(want)]
         missing = want - set(df["assignmentid"].unique())
         if missing:
-            print(f"Warning: these IDs are not in the CSV and will be skipped: {sorted(missing)}")
+            print(
+                f"Warning: these IDs are not in the CSV and will be skipped: {sorted(missing)}"
+            )
         print(f"Filtered to {len(df)} row(s) matching --assignment-ids")
     baselines = discover_baselines(baselines_base)
     print(f"Found {len(baselines)} baselines: {baselines}")
@@ -612,12 +666,15 @@ def main():
             print(f"Missing pipeline mesh: {original_glb}")
             return
         sweep_dir = output_base / aid / "orientation_sweep"
-        print(f"\n=== Orientation sweep (original_slat.glb) ===")
+        print("\n=== Orientation sweep (original_slat.glb) ===")
         print(f"  assignment: {aid}  category: {category}")
         print(f"  mesh: {original_glb}")
         print(f"  output: {sweep_dir}")
         export_orientation_sweep_glbs(
-            original_glb, sweep_dir, "original_slat", uniform_scale=None,
+            original_glb,
+            sweep_dir,
+            "original_slat",
+            uniform_scale=None,
             skip_existing=args.skip_existing,
         )
         return
@@ -635,16 +692,21 @@ def main():
         result_folder = results_base / category / aid
         input_mesh = find_original_input_mesh(result_folder)
         if input_mesh is None:
-            print(f"Missing input mesh under {result_folder} (input_mesh/normalized.obj "
-                  f"or from_shapenet/models/model_normalized.obj)")
+            print(
+                f"Missing input mesh under {result_folder} (input_mesh/normalized.obj "
+                f"or from_shapenet/models/model_normalized.obj)"
+            )
             return
         sweep_dir = output_base / aid / "orientation_sweep"
-        print(f"\n=== Orientation sweep (original input mesh) ===")
+        print("\n=== Orientation sweep (original input mesh) ===")
         print(f"  assignment: {aid}  category: {category}")
         print(f"  mesh: {input_mesh}")
         print(f"  output: {sweep_dir}")
         export_orientation_sweep_glbs(
-            input_mesh, sweep_dir, "original_mesh", uniform_scale=None,
+            input_mesh,
+            sweep_dir,
+            "original_mesh",
+            uniform_scale=None,
             skip_existing=args.skip_existing,
         )
         return
@@ -657,16 +719,23 @@ def main():
             aid = args.orientation_sweep_assignment.strip()
             mesh = find_baseline_mesh(baselines_base / sweep_bl, aid)
             if mesh is None:
-                print(f"No mesh for baseline {sweep_bl!r} assignment {aid!r} under {baselines_base / sweep_bl}")
+                print(
+                    f"No mesh for baseline {sweep_bl!r} assignment {aid!r} under {baselines_base / sweep_bl}"
+                )
                 return
             sweep_dir = output_base / aid / "orientation_sweep"
             print(f"  assignment: {aid}")
             print(f"  mesh: {mesh}")
             print(f"  output: {sweep_dir}")
-            print("  mode: post-pipeline (PIPELINE_ORIENTATION then each index; matches comparison GLBs)")
+            print(
+                "  mode: post-pipeline (PIPELINE_ORIENTATION then each index; matches comparison GLBs)"
+            )
             bl_scale = BASELINE_SCALES.get(sweep_bl)
             export_orientation_sweep_glbs_post_pipeline(
-                mesh, sweep_dir, sweep_bl, uniform_scale=bl_scale,
+                mesh,
+                sweep_dir,
+                sweep_bl,
+                uniform_scale=bl_scale,
                 skip_existing=args.skip_existing,
             )
             return
@@ -682,7 +751,10 @@ def main():
             print(f"Using sample: {assignment_id}  mesh: {mesh}")
             bl_scale = BASELINE_SCALES.get(sweep_bl)
             export_orientation_sweep_glbs(
-                mesh, sweep_dir, sweep_bl, uniform_scale=bl_scale,
+                mesh,
+                sweep_dir,
+                sweep_bl,
+                uniform_scale=bl_scale,
                 skip_existing=args.skip_existing,
             )
             break
@@ -720,22 +792,34 @@ def main():
 
         _pipe_orient = (PIPELINE_ORIENTATION,)
         render_single(
-            original_glb, original_png, args.skip_existing,
-            orientation_indices=_pipe_orient, scale=None,
+            original_glb,
+            original_png,
+            args.skip_existing,
+            orientation_indices=_pipe_orient,
+            scale=None,
         )
         render_single(
-            edited_glb, ours_png, args.skip_existing,
-            orientation_indices=_pipe_orient, scale=None,
+            edited_glb,
+            ours_png,
+            args.skip_existing,
+            orientation_indices=_pipe_orient,
+            scale=None,
         )
 
         if args.export_glb:
             export_comparison_glb(
-                original_glb, out_dir / "original.glb", args.skip_existing,
-                orientation_indices=_pipe_orient, scale=None,
+                original_glb,
+                out_dir / "original.glb",
+                args.skip_existing,
+                orientation_indices=_pipe_orient,
+                scale=None,
             )
             export_comparison_glb(
-                edited_glb, out_dir / "ours.glb", args.skip_existing,
-                orientation_indices=_pipe_orient, scale=None,
+                edited_glb,
+                out_dir / "ours.glb",
+                args.skip_existing,
+                orientation_indices=_pipe_orient,
+                scale=None,
             )
             input_mesh_path = find_original_input_mesh(result_folder)
             if input_mesh_path is not None:
@@ -754,7 +838,9 @@ def main():
 
         # --- Render baselines ---
         for baseline_name in baselines:
-            baseline_mesh = find_baseline_mesh(baselines_base / baseline_name, assignment_id)
+            baseline_mesh = find_baseline_mesh(
+                baselines_base / baseline_name, assignment_id
+            )
             if baseline_mesh is None:
                 continue
             baseline_png = out_dir / f"{baseline_name}.png"
@@ -767,13 +853,19 @@ def main():
                 trellis_post_orient=trellis_post_kw,
             )
             render_single(
-                baseline_mesh, baseline_png, args.skip_existing,
-                orientation_indices=bl_chain, scale=bl_scale,
+                baseline_mesh,
+                baseline_png,
+                args.skip_existing,
+                orientation_indices=bl_chain,
+                scale=bl_scale,
             )
             if args.export_glb:
                 export_comparison_glb(
-                    baseline_mesh, out_dir / f"{baseline_name}.glb", args.skip_existing,
-                    orientation_indices=bl_chain, scale=bl_scale,
+                    baseline_mesh,
+                    out_dir / f"{baseline_name}.glb",
+                    args.skip_existing,
+                    orientation_indices=bl_chain,
+                    scale=bl_scale,
                 )
             if baseline_png.exists():
                 image_dict[baseline_name] = str(baseline_png)
@@ -784,12 +876,16 @@ def main():
             make_comparison_image(image_dict, utterance, comparison_png)
 
         stats["rendered"] += 1
-        print(f"[{stats['rendered']:4d}] {assignment_id}  ({category})  "
-              f"images={len(image_dict)}")
+        print(
+            f"[{stats['rendered']:4d}] {assignment_id}  ({category})  "
+            f"images={len(image_dict)}"
+        )
 
-    print(f"\nDone. rendered={stats['rendered']}  "
-          f"skipped_no_result={stats['skipped_no_result']}  "
-          f"skipped_incomplete={stats['skipped_incomplete']}")
+    print(
+        f"\nDone. rendered={stats['rendered']}  "
+        f"skipped_no_result={stats['skipped_no_result']}  "
+        f"skipped_incomplete={stats['skipped_incomplete']}"
+    )
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-# Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions
+# Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions (SIGGRAPH'26)
 
 **Etai Sella\*<sup>1</sup>, Hao Phung\*<sup>2</sup>, Nitay Amiel<sup>3</sup>, Or Litany<sup>3</sup>, Or Patashnik<sup>1</sup>, Hadar Averbuch-Elor<sup>2</sup>**
 
@@ -9,6 +9,33 @@ This is the official PyTorch implementation of **Prox-E**.
 [![arXiv](https://img.shields.io/badge/arXiv-2604.23774-b31b1b.svg)](https://arxiv.org/abs/2604.23774)
 ![Generic badge](https://img.shields.io/badge/conf-SIGGRAPH2026-purple.svg)
 
+<details open="open" style='padding: 10px; border-radius:5px 30px 30px 5px; border-style: solid; border-width: 1px;'>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#abstract">Abstract</a>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+    </li>
+    <li>
+      <a href="#running-the-demos">Running the Demos</a>
+    </li>
+    <li>
+      <a href="#running-prox-e-on-custom-shapes">Running Prox-E on custom shapes</a>
+    </li>
+    <li>
+      <a href="#evaluation">Evaluation</a>
+    </li>
+    <li>
+      <a href="#bibtex">BibTeX</a>
+    </li>
+    <li>
+      <a href="#acknowledgements">Acknowledgements</a>
+    </li>
+  </ol>
+</details>
+
 ## 📄 Abstract
 
 Text-based 2D image editing models have recently reached an impressive level of maturity, motivating a growing body of work that heavily depends on these models to drive 3D edits. While effective for appearance-based modifications, such 2D-centric 3D editing pipelines often struggle with fine-grained 3D editing, where localized structural changes must be applied while strictly preserving an object's overall identity. To address this limitation, we propose Prox-E, a training-free framework that enables fine-grained 3D control through an explicit, primitive-based geometric abstraction. Our framework first abstracts an input 3D shape into a compact set of geometric primitives. A pretrained vision-language model (VLM) then edits this abstraction to specify primitive-level changes. These structural edits are subsequently used to guide a 3D generative model, enabling fine-grained, localized modifications while preserving unchanged regions of the original shape. Through extensive experiments, we demonstrate that our method consistently balances identity preservation, shape quality, and instruction fidelity more effectively than various existing approaches, including 2D-based 3D editors and training-based methods.
@@ -17,6 +44,9 @@ Text-based 2D image editing models have recently reached an impressive level of 
 <p align="center">
 <img src="webpage_assets/images/temp_teaser.jpg">
 </p>
+
+**News**:
+- [May 29, 2026] Released evaluation code and the ShapeTalk benchmark dataset [🤗 haopt/prox-e-shapetalk-benchmark](https://huggingface.co/datasets/haopt/prox-e-shapetalk-benchmark).
 
 <br>
 
@@ -174,18 +204,30 @@ If you change the orientation for a mesh you already processed, use a fresh `--o
 
 <br>
 
+## 📊 Evaluation
+
+The `evals/` folder contains a unified evaluator that computes seven metrics grouped into Identity Preservation (l-GD, LPIPS, DINO-I), 3D Quality (PFD, FID), and Edit Fidelity (CLIP, VQA). 
+
+First download our ShapeTalk benchmark: 
+```bash
+hf download haopt/prox-e-shapetalk-benchmark --repo-type=dataset
+```
+Then run a single command to output `results.json`:
+```
+PRED_MESH_DIR=<path_to_outputs> bash evals/scripts/run.sh
+```
+
+See [`evals/README.md`](evals/README.md) for the more details. 
+<br>
+
 ## ✏️ BibTeX
 If you find our work useful in your research, please consider citing:
 
-    @misc{sella2026proxefinegrained3dshape,
+    @inproceedings{sella2026proxefinegrained3dshape,
      title={Prox-E: Fine-Grained 3D Shape Editing via Primitive-Based Abstractions},
      author={Etai Sella and Hao Phung and Nitay Amiel and Or Litany and Or Patashnik and Hadar Averbuch-Elor},
+     booktitle={Special Interest Group on Computer Graphics and Interactive Techniques Conference Conference Papers},
      year={2026},
-     eprint={2604.23774},
-     archivePrefix={arXiv},
-     primaryClass={cs.GR},
-     eprint={2604.23774},
-     url={https://arxiv.org/abs/2604.23774},
     }
     
 </br>

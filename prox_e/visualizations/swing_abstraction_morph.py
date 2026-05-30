@@ -72,7 +72,9 @@ def _lerp_vec(va: List[float], vb: List[float], t: float) -> List[float]:
     return ((1.0 - t) * a + t * b).tolist()
 
 
-def _lerp_rotation_matrix(R0: List[List[float]], R1: List[List[float]], t: float) -> List[List[float]]:
+def _lerp_rotation_matrix(
+    R0: List[List[float]], R1: List[List[float]], t: float
+) -> List[List[float]]:
     """Linear blend + orthogonalize (QR) so the matrix stays a proper rotation."""
     m0 = np.asarray(R0, dtype=np.float64)
     m1 = np.asarray(R1, dtype=np.float64)
@@ -127,9 +129,7 @@ def morph_abstraction_at_t(
         c["translation"] = _lerp_vec(o["translation"], e["translation"], t)
         c["rotation"] = _lerp_rotation_matrix(o["rotation"], e["rotation"], t)
         c["exponents"] = _lerp_vec(o["exponents"], e["exponents"], t)
-        c["color"] = [
-            _lerp(COLOR_WHITE[i], COLOR_BLUE[i], t) for i in range(3)
-        ]
+        c["color"] = [_lerp(COLOR_WHITE[i], COLOR_BLUE[i], t) for i in range(3)]
         out.append(c)
 
     # Removed SQs: shrink scale toward zero
@@ -149,9 +149,7 @@ def morph_abstraction_at_t(
         c["translation"] = _sq_copy(sq)["translation"]
         c["rotation"] = _sq_copy(sq)["rotation"]
         c["exponents"] = _sq_copy(sq)["exponents"]
-        c["color"] = [
-            _lerp(COLOR_WHITE[i], COLOR_PURPLE[i], t) for i in range(3)
-        ]
+        c["color"] = [_lerp(COLOR_WHITE[i], COLOR_PURPLE[i], t) for i in range(3)]
         out.append(c)
 
     # Stable order by index for reproducibility
@@ -184,7 +182,9 @@ def export_morph_glb(
     morphed = morph_abstraction_at_t(original, edited, categories, t)
     mesh = mesh_from_abstraction(morphed, resolution=resolution)
     if mesh is None:
-        raise RuntimeError("mesh_from_abstraction returned None for morphed abstraction")
+        raise RuntimeError(
+            "mesh_from_abstraction returned None for morphed abstraction"
+        )
     mesh = apply_teaser_abstraction_bake_orientation(mesh)
     out_glb.parent.mkdir(parents=True, exist_ok=True)
     mesh.export(str(out_glb), file_type="glb")

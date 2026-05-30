@@ -16,14 +16,18 @@ from prox_e.orientation import ORIENTATION_TRANSFORMS, load_oriented_normalized_
 from prox_e.utils import render_obj_with_blender
 
 
-def make_overview(image_paths: list[Path], output_path: Path, *, thumb_size: int = 220) -> None:
+def make_overview(
+    image_paths: list[Path], output_path: Path, *, thumb_size: int = 220
+) -> None:
     if not image_paths:
         return
 
     cols = 4
     label_h = 28
     rows = (len(image_paths) + cols - 1) // cols
-    canvas = Image.new("RGB", (cols * thumb_size, rows * (thumb_size + label_h)), "white")
+    canvas = Image.new(
+        "RGB", (cols * thumb_size, rows * (thumb_size + label_h)), "white"
+    )
     draw = ImageDraw.Draw(canvas)
 
     for i, path in enumerate(image_paths):
@@ -38,7 +42,9 @@ def make_overview(image_paths: list[Path], output_path: Path, *, thumb_size: int
 
         idx = int(path.name.split("_")[1])
         name = ORIENTATION_TRANSFORMS[idx][0]
-        draw.text((col * thumb_size + 8, y + thumb_size + 6), f"{idx}: {name}", fill="black")
+        draw.text(
+            (col * thumb_size + 8, y + thumb_size + 6), f"{idx}: {name}", fill="black"
+        )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(output_path)
@@ -48,26 +54,34 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Normalize and render a mesh under every Prox-E orientation index."
     )
-    parser.add_argument("--input_mesh", type=Path, required=True, help="Path to a custom mesh file")
+    parser.add_argument(
+        "--input_mesh", type=Path, required=True, help="Path to a custom mesh file"
+    )
     parser.add_argument(
         "--output_folder",
         type=Path,
         default=None,
         help="Output directory (default: <input parent>/orientation_sweep/<input stem>)",
     )
-    parser.add_argument("--skip_existing", action="store_true", help="Reuse existing PNGs")
+    parser.add_argument(
+        "--skip_existing", action="store_true", help="Reuse existing PNGs"
+    )
     args = parser.parse_args()
 
     input_mesh = args.input_mesh.resolve()
     if not input_mesh.is_file():
         raise SystemExit(f"Input mesh not found: {input_mesh}")
 
-    out_dir = args.output_folder or input_mesh.parent / "orientation_sweep" / input_mesh.stem
+    out_dir = (
+        args.output_folder or input_mesh.parent / "orientation_sweep" / input_mesh.stem
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"Input:  {input_mesh}")
     print(f"Output: {out_dir}")
-    print(f"Rendering {len(ORIENTATION_TRANSFORMS)} orientations with the original.png camera/style")
+    print(
+        f"Rendering {len(ORIENTATION_TRANSFORMS)} orientations with the original.png camera/style"
+    )
 
     rendered: list[Path] = []
     for idx in sorted(ORIENTATION_TRANSFORMS):

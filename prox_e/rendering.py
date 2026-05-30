@@ -4,6 +4,7 @@ Rendering utilities for tredit.
 This module contains a modified copy of VoxHammer's BpyRenderer with
 flat shading fix applied for proper ShapeNet model rendering.
 """
+
 import os
 import bpy
 import json
@@ -46,26 +47,26 @@ def sphere_hammersley_sequence(n, num_samples, offset=(0, 0)):
 def apply_flat_shading():
     """
     Apply flat shading to all mesh objects in the scene.
-    
+
     This fixes shading artifacts that can occur with ShapeNet models.
     """
     print("[FLAT SHADING] Starting flat shading application...")
-    
+
     # Count mesh objects
-    mesh_objects = [obj for obj in bpy.data.objects if obj.type == 'MESH']
+    mesh_objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
     print(f"[FLAT SHADING] Found {len(mesh_objects)} mesh objects in scene")
-    
+
     if len(mesh_objects) == 0:
         print("[FLAT SHADING] WARNING: No mesh objects found!")
         return
-    
+
     # 1. Ensure we start in Object Mode
-    if bpy.context.object and bpy.context.object.mode != 'OBJECT':
+    if bpy.context.object and bpy.context.object.mode != "OBJECT":
         print("[FLAT SHADING] Switching to Object Mode...")
-        bpy.ops.object.mode_set(mode='OBJECT')
-        
+        bpy.ops.object.mode_set(mode="OBJECT")
+
     # 2. Deselect all objects initially
-    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.object.select_all(action="DESELECT")
 
     for obj in mesh_objects:
         print(f"[FLAT SHADING] Processing mesh: {obj.name}")
@@ -73,28 +74,35 @@ def apply_flat_shading():
         bpy.context.view_layer.objects.active = obj
         # Select it
         obj.select_set(True)
-        
+
         # Apply Flat Shading (Works in Object Mode)
         try:
             bpy.ops.object.shade_flat()
             print(f"[FLAT SHADING]   Applied flat shading to: {obj.name}")
         except Exception as e:
             print(f"[FLAT SHADING]   ERROR applying flat shading to {obj.name}: {e}")
-        
+
         # Deselect it for the next iteration
         obj.select_set(False)
-    
+
     print("[FLAT SHADING] Flat shading application complete.")
 
 
 class BpyRenderer:
     """
     Blender renderer for multi-view rendering.
-    
+
     Modified from VoxHammer's BpyRenderer with flat shading fix.
     """
-    
-    def __init__(self, resolution: int = 512, engine: str = "BLENDER_EEVEE", geo_mode: bool = False, split_normal: bool = False, shade_smooth: bool = False):
+
+    def __init__(
+        self,
+        resolution: int = 512,
+        engine: str = "BLENDER_EEVEE",
+        geo_mode: bool = False,
+        split_normal: bool = False,
+        shade_smooth: bool = False,
+    ):
         self.resolution = resolution
         self.engine = engine
         self.geo_mode = geo_mode
@@ -104,12 +112,12 @@ class BpyRenderer:
 
     def _apply_smooth_shading(self):
         """Apply smooth shading to all mesh objects in the scene."""
-        mesh_objects = [obj for obj in bpy.data.objects if obj.type == 'MESH']
+        mesh_objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
         if not mesh_objects:
             return
-        if bpy.context.object and bpy.context.object.mode != 'OBJECT':
-            bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.select_all(action='DESELECT')
+        if bpy.context.object and bpy.context.object.mode != "OBJECT":
+            bpy.ops.object.mode_set(mode="OBJECT")
+        bpy.ops.object.select_all(action="DESELECT")
         for obj in mesh_objects:
             bpy.context.view_layer.objects.active = obj
             obj.select_set(True)
@@ -118,7 +126,9 @@ class BpyRenderer:
             except Exception as e:
                 print(f"[SMOOTH SHADING] ERROR on {obj.name}: {e}")
             obj.select_set(False)
-        print(f"[SMOOTH SHADING] Applied smooth shading to {len(mesh_objects)} mesh objects")
+        print(
+            f"[SMOOTH SHADING] Applied smooth shading to {len(mesh_objects)} mesh objects"
+        )
 
     def _setup_import_functions(self):
         import_functions = {
@@ -144,10 +154,10 @@ class BpyRenderer:
         bpy.context.scene.render.image_settings.file_format = "PNG"
         bpy.context.scene.render.image_settings.color_mode = "RGBA"
         bpy.context.scene.render.film_transparent = True
-        
+
         # Enable GPU for both CYCLES and EEVEE
         self._setup_gpu()
-        
+
         if self.engine == "CYCLES":
             bpy.context.scene.render.engine = "CYCLES"
             bpy.context.scene.cycles.samples = 32 if not self.geo_mode else 1
@@ -155,17 +165,23 @@ class BpyRenderer:
             bpy.context.scene.cycles.filter_width = 1
             bpy.context.scene.cycles.diffuse_bounces = 1
             bpy.context.scene.cycles.glossy_bounces = 1
-            bpy.context.scene.cycles.transparent_max_bounces = (3 if not self.geo_mode else 0)
-            bpy.context.scene.cycles.transmission_bounces = (3 if not self.geo_mode else 1)
+            bpy.context.scene.cycles.transparent_max_bounces = (
+                3 if not self.geo_mode else 0
+            )
+            bpy.context.scene.cycles.transmission_bounces = (
+                3 if not self.geo_mode else 1
+            )
             bpy.context.scene.cycles.use_denoising = True
             bpy.context.scene.cycles.device = "GPU"
             try:
                 bpy.context.scene.cycles.device = "GPU"
                 bpy.context.preferences.addons["cycles"].preferences.get_devices()
-                bpy.context.preferences.addons["cycles"].preferences.compute_device_type = "CUDA"
-            except:
+                bpy.context.preferences.addons[
+                    "cycles"
+                ].preferences.compute_device_type = "CUDA"
+            except Exception:
                 pass
-    
+
     def _setup_gpu(self):
         """Configure GPU rendering for Blender (works for both CYCLES and EEVEE)."""
         try:
@@ -182,7 +198,9 @@ class BpyRenderer:
                         for device in prefs.devices:
                             if device.type != "CPU":
                                 device.use = True
-                                print(f"[GPU] Enabled {device.type} device: {device.name}")
+                                print(
+                                    f"[GPU] Enabled {device.type} device: {device.name}"
+                                )
                         if any(d.use and d.type != "CPU" for d in prefs.devices):
                             print(f"[GPU] Using compute type: {compute_type}")
                             break
@@ -220,24 +238,34 @@ class BpyRenderer:
         bpy.ops.object.select_by_type(type="LIGHT")
         bpy.ops.object.delete()
 
-        default_light = bpy.data.objects.new("Default_Light", bpy.data.lights.new("Default_Light", type="POINT"))
+        default_light = bpy.data.objects.new(
+            "Default_Light", bpy.data.lights.new("Default_Light", type="POINT")
+        )
         bpy.context.collection.objects.link(default_light)
         default_light.data.energy = 1000
         default_light.location = (4, 1, 6)
         default_light.rotation_euler = (0, 0, 0)
 
-        top_light = bpy.data.objects.new("Top_Light", bpy.data.lights.new("Top_Light", type="AREA"))
+        top_light = bpy.data.objects.new(
+            "Top_Light", bpy.data.lights.new("Top_Light", type="AREA")
+        )
         bpy.context.collection.objects.link(top_light)
         top_light.data.energy = 10000
         top_light.location = (0, 0, 10)
         top_light.scale = (100, 100, 100)
 
-        bottom_light = bpy.data.objects.new("Bottom_Light", bpy.data.lights.new("Bottom_Light", type="AREA"))
+        bottom_light = bpy.data.objects.new(
+            "Bottom_Light", bpy.data.lights.new("Bottom_Light", type="AREA")
+        )
         bpy.context.collection.objects.link(bottom_light)
         bottom_light.data.energy = 1000
         bottom_light.location = (0, 0, -10)
         bottom_light.rotation_euler = (0, 0, 0)
-        return {"default_light": default_light, "top_light": top_light, "bottom_light": bottom_light}
+        return {
+            "default_light": default_light,
+            "top_light": top_light,
+            "bottom_light": bottom_light,
+        }
 
     def load_object(self, object_path: str):
         file_extension = object_path.split(".")[-1].lower()
@@ -248,7 +276,9 @@ class BpyRenderer:
         if file_extension == "blend":
             import_function(directory=object_path, link=False)
         elif file_extension in {"glb", "gltf"}:
-            import_function(filepath=object_path, merge_vertices=True, import_shading="NORMALS")
+            import_function(
+                filepath=object_path, merge_vertices=True, import_shading="NORMALS"
+            )
         else:
             import_function(filepath=object_path)
 
@@ -261,7 +291,9 @@ class BpyRenderer:
                 obj.hide_select = False
                 obj.select_set(True)
         bpy.ops.object.delete()
-        invisible_collections = [col for col in bpy.data.collections if col.hide_viewport]
+        invisible_collections = [
+            col for col in bpy.data.collections if col.hide_viewport
+        ]
         for col in invisible_collections:
             bpy.data.collections.remove(col)
 
@@ -271,7 +303,9 @@ class BpyRenderer:
 
     def convert_to_meshes(self):
         bpy.ops.object.select_all(action="DESELECT")
-        bpy.context.view_layer.objects.active = [obj for obj in bpy.context.scene.objects if obj.type == "MESH"][0]
+        bpy.context.view_layer.objects.active = [
+            obj for obj in bpy.context.scene.objects if obj.type == "MESH"
+        ][0]
         for obj in bpy.context.scene.objects:
             obj.select_set(True)
         bpy.ops.object.convert(target="MESH")
@@ -322,7 +356,11 @@ class BpyRenderer:
         bbox_min = (math.inf,) * 3
         bbox_max = (-math.inf,) * 3
         found = False
-        scene_meshes = [obj for obj in bpy.context.scene.objects.values() if isinstance(obj.data, bpy.types.Mesh)]
+        scene_meshes = [
+            obj
+            for obj in bpy.context.scene.objects.values()
+            if isinstance(obj.data, bpy.types.Mesh)
+        ]
         for obj in scene_meshes:
             found = True
             for coord in obj.bound_box:
@@ -335,7 +373,9 @@ class BpyRenderer:
         return Vector(bbox_min), Vector(bbox_max)
 
     def normalize_scene(self) -> Tuple[float, Vector]:
-        scene_root_objects = [obj for obj in bpy.context.scene.objects.values() if not obj.parent]
+        scene_root_objects = [
+            obj for obj in bpy.context.scene.objects.values() if not obj.parent
+        ]
         if len(scene_root_objects) > 1:
             scene = bpy.data.objects.new("ParentEmpty", None)
             bpy.context.scene.collection.objects.link(scene)
@@ -368,7 +408,15 @@ class BpyRenderer:
         matrix.append([0, 0, 0, 1])
         return matrix
 
-    def render_object(self, file_path: str, output_dir: str, num_views: int = 150, scale: float = 1.0, offset = None, save_mesh: bool = True) -> Dict:
+    def render_object(
+        self,
+        file_path: str,
+        output_dir: str,
+        num_views: int = 150,
+        scale: float = 1.0,
+        offset=None,
+        save_mesh: bool = True,
+    ) -> Dict:
         print(f"[RENDER] Starting render_object for: {file_path}")
         print(f"[RENDER] Output dir: {output_dir}, num_views: {num_views}")
         os.makedirs(output_dir, exist_ok=True)
@@ -379,18 +427,22 @@ class BpyRenderer:
             self.init_scene()
             print(f"[RENDER] Loading object: {file_path}")
             self.load_object(file_path)
-            
+
             # List all objects after loading
-            print(f"[RENDER] Objects after loading: {[obj.name for obj in bpy.data.objects]}")
-            print(f"[RENDER] Mesh objects: {[obj.name for obj in bpy.data.objects if obj.type == 'MESH']}")
-            
+            print(
+                f"[RENDER] Objects after loading: {[obj.name for obj in bpy.data.objects]}"
+            )
+            print(
+                f"[RENDER] Mesh objects: {[obj.name for obj in bpy.data.objects if obj.type == 'MESH']}"
+            )
+
             # NOTE: Flat shading fix is disabled by default since switching to BLENDER_EEVEE
             # resolved the shading issues. Uncomment below if needed for CYCLES rendering.
             # apply_flat_shading()
-            
+
             if self.shade_smooth:
                 self._apply_smooth_shading()
-            
+
             if self.split_normal:
                 self.split_mesh_normal()
             # delete_custom_normals()
@@ -403,8 +455,10 @@ class BpyRenderer:
             # Convert tuple/list offset to Vector if needed
             if not isinstance(offset, Vector):
                 offset = Vector(offset)
-            
-            scene_root_objects = [obj for obj in bpy.context.scene.objects.values() if not obj.parent]
+
+            scene_root_objects = [
+                obj for obj in bpy.context.scene.objects.values() if not obj.parent
+            ]
             if len(scene_root_objects) > 1:
                 scene = bpy.data.objects.new("ParentEmpty", None)
                 bpy.context.scene.collection.objects.link(scene)
@@ -416,7 +470,9 @@ class BpyRenderer:
             bpy.context.view_layer.update()
             scene.matrix_world.translation += offset
             bpy.ops.object.select_all(action="DESELECT")
-            print(f"[INFO] Scene scaled with specified scale: {scale}, offset: {offset}")
+            print(
+                f"[INFO] Scene scaled with specified scale: {scale}, offset: {offset}"
+            )
 
         cam = self.init_camera()
         self.init_lighting()
@@ -433,7 +489,10 @@ class BpyRenderer:
             pitchs.append(p)
         radius = [2] * num_views
         fov = [40 / 180 * np.pi] * num_views
-        views = [{"yaw": y, "pitch": p, "radius": r, "fov": f} for y, p, r, f in zip(yaws, pitchs, radius, fov)]
+        views = [
+            {"yaw": y, "pitch": p, "radius": r, "fov": f}
+            for y, p, r, f in zip(yaws, pitchs, radius, fov)
+        ]
         to_export = {
             "aabb": [[-0.5, -0.5, -0.5], [0.5, 0.5, 0.5]],
             "scale": scale,
@@ -478,7 +537,9 @@ class BpyRenderer:
                         mesh_file_path = ply_path
                         print("[INFO] Mesh file saved.")
                     except AttributeError:
-                        print("[WARNING] PLY export not available, skipping mesh export")
+                        print(
+                            "[WARNING] PLY export not available, skipping mesh export"
+                        )
             except Exception as e:
                 print(f"[WARNING] Mesh export failed: {e}")
         return {
@@ -491,23 +552,23 @@ class BpyRenderer:
 
 
 def render_3d_model(
-    file_path: str, 
-    output_dir: str, 
-    num_views: int = 150, 
-    scale: float = 1.0, 
-    offset = None, 
-    resolution: int = 512, 
-    engine: str = "BLENDER_EEVEE", 
-    geo_mode: bool = False, 
-    split_normal: bool = False, 
+    file_path: str,
+    output_dir: str,
+    num_views: int = 150,
+    scale: float = 1.0,
+    offset=None,
+    resolution: int = 512,
+    engine: str = "BLENDER_EEVEE",
+    geo_mode: bool = False,
+    split_normal: bool = False,
     save_mesh: bool = True,
     shade_smooth: bool = False,
 ) -> Dict:
     """
     Render a 3D model from multiple views.
-    
+
     This is a modified version of VoxHammer's render_3d_model with flat shading fix.
-    
+
     Args:
         file_path: Path to the input 3D model
         output_dir: Directory to save rendered images
@@ -519,37 +580,69 @@ def render_3d_model(
         geo_mode: If True, use geometry-only rendering
         split_normal: If True, split normals
         save_mesh: If True, save mesh as PLY
-    
+
     Returns:
         Dict with rendering results
     """
-    renderer = BpyRenderer(resolution=resolution, engine=engine, geo_mode=geo_mode, split_normal=split_normal, shade_smooth=shade_smooth)
-    return renderer.render_object(file_path, output_dir, num_views, scale, offset, save_mesh)
+    renderer = BpyRenderer(
+        resolution=resolution,
+        engine=engine,
+        geo_mode=geo_mode,
+        split_normal=split_normal,
+        shade_smooth=shade_smooth,
+    )
+    return renderer.render_object(
+        file_path, output_dir, num_views, scale, offset, save_mesh
+    )
 
 
 if __name__ == "__main__":
     import argparse
-    
-    parser = argparse.ArgumentParser(description="Render a 3D model with flat shading fix")
-    parser.add_argument("--input", "-i", type=str, required=True, help="Path to input 3D model")
-    parser.add_argument("--output", "-o", type=str, default="./render_test", help="Output directory")
-    parser.add_argument("--num_views", "-n", type=int, default=5, help="Number of views to render (default: 5)")
-    parser.add_argument("--resolution", "-r", type=int, default=512, help="Render resolution (default: 512)")
-    parser.add_argument("--engine", "-e", type=str, default="BLENDER_EEVEE", choices=["CYCLES", "BLENDER_EEVEE"], 
-                        help="Render engine (default: BLENDER_EEVEE)")
-    
+
+    parser = argparse.ArgumentParser(
+        description="Render a 3D model with flat shading fix"
+    )
+    parser.add_argument(
+        "--input", "-i", type=str, required=True, help="Path to input 3D model"
+    )
+    parser.add_argument(
+        "--output", "-o", type=str, default="./render_test", help="Output directory"
+    )
+    parser.add_argument(
+        "--num_views",
+        "-n",
+        type=int,
+        default=5,
+        help="Number of views to render (default: 5)",
+    )
+    parser.add_argument(
+        "--resolution",
+        "-r",
+        type=int,
+        default=512,
+        help="Render resolution (default: 512)",
+    )
+    parser.add_argument(
+        "--engine",
+        "-e",
+        type=str,
+        default="BLENDER_EEVEE",
+        choices=["CYCLES", "BLENDER_EEVEE"],
+        help="Render engine (default: BLENDER_EEVEE)",
+    )
+
     args = parser.parse_args()
-    
-    print("="*60)
+
+    print("=" * 60)
     print("RENDERING TEST WITH FLAT SHADING FIX")
-    print("="*60)
+    print("=" * 60)
     print(f"Input: {args.input}")
     print(f"Output: {args.output}")
     print(f"Num views: {args.num_views}")
     print(f"Resolution: {args.resolution}")
     print(f"Engine: {args.engine}")
-    print("="*60)
-    
+    print("=" * 60)
+
     result = render_3d_model(
         file_path=args.input,
         output_dir=args.output,
@@ -557,9 +650,8 @@ if __name__ == "__main__":
         resolution=args.resolution,
         engine=args.engine,
     )
-    
-    print("="*60)
-    print("RENDER COMPLETE")
-    print("="*60)
-    print(f"Result: {result}")
 
+    print("=" * 60)
+    print("RENDER COMPLETE")
+    print("=" * 60)
+    print(f"Result: {result}")
