@@ -22,7 +22,7 @@ This is the official PyTorch implementation of **Prox-E**.
       <a href="#-running-the-demos">Running the Demos</a>
     </li>
     <li>
-      <a href="#-running-prox-e-on-custom-shapes">Running Prox-E on custom shapes</a>
+      <a href="#-running-on-custom-shapes">Running on custom shapes</a>
     </li>
     <li>
       <a href="#-evaluation">Evaluation</a>
@@ -173,7 +173,7 @@ Final results are saved in the `outputs/` folder.
 
 <br>
 
-## 🛋️ Running Prox-E on custom shapes
+## 🛋️ Running on custom shapes
 
 For a custom mesh, set `--input_mesh` to the mesh file, `--category` to the object class, and `--edit_instruction` to the requested edit:
 
