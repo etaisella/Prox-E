@@ -12,7 +12,7 @@ Unified evaluator for Prox-E mesh outputs. Computes seven metrics in three group
 | Edit Fidelity | CLIP (sim + dir) | CLIP scores on mesh renders (ViT-B/32) |
 | | VQA | VQAScore given a pair of input and output renders, and an edit description |
 
-## Download ShapeTalk Benchmark
+## Download [🤗 ShapeTalk benchmark](https://huggingface.co/datasets/haopt/prox-e-shapetalk-benchmark)
 ```
 hf download haopt/prox-e-shapetalk-benchmark --repo-type=dataset
 ```
@@ -33,12 +33,14 @@ python -m evals.main \
   --input_pcd_dir prox-e-shapetalk-benchmark/point_cloud \
   --output_dir <eval_run_dir> \
   --device cuda:0 \
-  --metrics identity quality fidelity
+  --metrics identity quality fidelity \
+  --enable_vqa
 ```
 
 Notes:
 - `--input_render_dir` / `--input_pcd_dir` are optional; if omitted, renders and point clouds are generated and cached under `--output_dir/{renders,pcd}/` and reused on subsequent runs.
 - Prox-E `.glb` outputs come out of the TRELLIS coordinate system. To render them upright like the GT meshes, pass `--pred_rotation -90 0 0`.
+- Run eval with VQA would take a hour to finish so feel free to drop `--enable_vqa flag` if needed.
 
 
 <details>
@@ -61,15 +63,26 @@ Notes:
 
 ### Output
 
-`<eval_run_dir>/results.json`:
+Structure of `<eval_run_dir>/results.json`:
 
 ```json
 {
   "n_samples": 600,
-  "identity_preservation": {"LPIPS": 0.10, "DINO-I": 0.92, "l-GD": 0.02,
-                            "l-GD_per_class": {"chair": 0.13, "table": 0.20, "lamp": 0.21}},
-  "3d_quality":            {"PFD": 11.34, "FID": 32.60},
-  "edit_fidelity":         {"CLIP-Sim": 0.27, "CLIP-Dir": 0.91, "VQA": 0.71}
+  "identity_preservation": {
+    "LPIPS": ,
+    "DINO-I": ,
+    "l-GD": ,
+    ...
+  },
+  "3d_quality": {
+    "PFD": ,
+    "FID": 
+  },
+  "edit_fidelity": {
+    "CLIP-Sim": ,
+    "VQA": ,
+    "CLIP-Dir": 
+  }
 }
 ```
 

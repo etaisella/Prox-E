@@ -208,7 +208,7 @@ If you change the orientation for a mesh you already processed, use a fresh `--o
 
 The `evals/` folder contains a unified evaluator that computes seven metrics grouped into Identity Preservation (l-GD, LPIPS, DINO-I), 3D Quality (PFD, FID), and Edit Fidelity (CLIP, VQA). 
 
-First download our ShapeTalk benchmark: 
+First download our [🤗 ShapeTalk benchmark](https://huggingface.co/datasets/haopt/prox-e-shapetalk-benchmark): 
 ```bash
 hf download haopt/prox-e-shapetalk-benchmark --repo-type=dataset
 ```
@@ -218,6 +218,7 @@ PRED_MESH_DIR=<path_to_outputs> bash evals/scripts/run.sh
 ```
 
 See [`evals/README.md`](evals/README.md) for the more details. 
+
 <br>
 
 ## ✏️ BibTeX
